@@ -1,11 +1,12 @@
 import React from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
+import { Col, Card } from 'reactstrap';
 
 const FamousCardView = () => {
     return (
       <div className="container">
-        <div className="md-4">
-        <div className="card">
+        <Col md={6} className="mx-auto">
+        <Card>
             <div className="row">
 
             </div>
@@ -16,8 +17,8 @@ const FamousCardView = () => {
             <div className="row">
                 
             </div>
-        </div>
-        </div>
+          </Card>
+        </Col>
       </div>
     );
 }
