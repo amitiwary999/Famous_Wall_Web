@@ -35,13 +35,26 @@ const Login = () => {
         }
     };
 
+    const loginWithGoogle = () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase
+            .auth()
+            .signInWithPopup(provider)
+            .then(result => {
+                
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
+
     return(
-        <Container className="d-flex" style={{ minHeight: '88vh' }}>
+        <div className="d-flex" style={{ height: '100vh', background: 'grey' }}>
             <Col md="8" className="text-center justify-content-center align-self-center offset-md-2">
                 <Card className="pt-2 pb-2">
-                    <img src={logo} />
+                    <img src={logo} className="mx-auto" style={{ height: '180px', width: '180px' }}/>
       
-                    <div className="text-center">
+                    <div className="text-center mt-4">
                         <Input
                             name="email"
                             type="email"
@@ -55,18 +68,26 @@ const Login = () => {
                         />
 
                         <Button
-                            className="mx-auto mt-1 py-1"
+                            className="mx-auto mt-2"
                             style={{ width: '200px' }}
                             color="primary"
                             type="submit"
-                            onClick={sendEmailLink}
-                        >
+                            onClick={sendEmailLink}>
                             Send me a login link
-            </Button>
+                        </Button>
+                        <p className="font-weight-bold mt-6">OR</p>
+                        <Button
+                            className="mx-auto mt-2"
+                            style={{ width: '200px' }}
+                            color="primary"
+                            type="submit"
+                            onClick={loginWithGoogle}>
+                            Login using Google
+                        </Button>
                     </div>
                 </Card>
             </Col>
-        </Container>
+        </div>
     )
 }
 
