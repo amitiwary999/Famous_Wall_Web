@@ -7,17 +7,22 @@ import {
   Switch,
 } from "react-router-dom";
 
-const Home = lazy(() =>
-  import('./view/home/FamousCardView')
+const Home = lazy(() => import('./view/home/FamousCardView'))
+const Login = lazy(() =>
+  import('./view/login/Login')
 );
 
 function App() {
   const pages = [
     {
       pageLink: "/",
-      view: Home,
-      displayName: "Home",
+      view: Home
     },
+    {
+      pageLink: "/login",
+      view: Login,
+      displayName: "Home",
+    }
   ];
   return (
     <div className="App">
