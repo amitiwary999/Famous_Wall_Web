@@ -7,7 +7,7 @@ import {
   Switch,
 } from "react-router-dom";
 
-const Home = lazy(() => import('./view/home/FamousCardView'))
+const Home = lazy(() => import('./view/home/home1'))
 const Login = lazy(() =>
   import('./view/login/Login')
 );

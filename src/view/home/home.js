@@ -3,18 +3,32 @@ import InfiniteScroll from 'react-infinite-scroller'
 import { Spinner, Card, Badge } from 'reactstrap'
 import { Video, Image, Music } from 'react-feather'
 import Dropzone from 'react-dropzone'
+import FamousCardView from './FamousCardView'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchFamousPosts } from '../../redux/action/homeAction'
 
 const Home = () => {
-    const [famousPosts, setFamousPosts] = useState([])
-    const [hasMoreItems, setHasMoreItems] = useState(true)
-    const [nextHref, setNextHref] = useState(null)
-    const [items, setItems] = useState([])
+  const [famousPosts, lastItem, hasMoreItems] = useSelector(state => ({
+    famousPost: state.home.famousPost,
+    lastItem: state.home.lastItem,
+    hasMoreItems: state.home.hasMoreItems
+  }))
+  let dispatch = useDispatch()
 
-   useEffect(() => {
-       famousPosts.map((famousPost, index) => {
-           setItems([...items, famousPost])
-       })
-   }, [famousPosts])
+   const updateItemDesign = () => {
+     var items = []
+     famousPosts.map((item,index) => {
+       items.push(
+         <FamousCardView data={item}/>
+       )
+     })
+     return items
+   }
+
+   const loadMoreItems = (page) => {
+     console.log("page "+page)
+     dispatch(fetchFamousPosts(lastItem))
+   }
    
     return (
       <div>
@@ -63,11 +77,11 @@ const Home = () => {
         </Card>
         <InfiniteScroll
           pageStart={0}
-          loadMore={this.loadItems.bind(this)}
-          hasMore={this.state.hasMoreItems}
+          loadMore={loadMoreItems}
+          hasMore={hasMoreItems}
           loader={<Spinner />}
         >
-          {items}
+          {updateItemDesign}
         </InfiniteScroll>
       </div>
     );
