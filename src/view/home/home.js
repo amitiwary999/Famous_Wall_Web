@@ -6,9 +6,10 @@ import Dropzone from 'react-dropzone'
 import FamousCardView from './FamousCardView'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchFamousPosts } from '../../redux/action/homeAction'
+import firebase from '../../firebase/Firebase'
 
 const Home = () => {
-  const [famousPosts, lastItem, hasMoreItems] = useSelector(state => ({
+  const {famousPosts, lastItem, hasMoreItems} = useSelector(state => ({
     famousPost: state.home.famousPost,
     lastItem: state.home.lastItem,
     hasMoreItems: state.home.hasMoreItems
@@ -29,6 +30,35 @@ const Home = () => {
      console.log("page "+page)
      dispatch(fetchFamousPosts(lastItem))
    }
+
+  const uploadTask = (file) => {
+       let time = new Date().getTime();
+       console.log(file);
+       const storage = firebase.storage();
+       const uploadTask = storage.ref(`video/${time + file.name}`).put(file);
+       uploadTask.on(
+         "state_changed",
+         (snapshot) => {},
+         (error) => {
+           console.log(error);
+           
+         },
+         () => {
+           storage
+             .ref("video")
+             .child(time + file.name)
+             .getDownloadURL()
+             .then((url) => {
+               console.log(url);
+               
+             })
+             .catch((err) => {
+              
+               console.log(err);
+             });
+         }
+       );
+    };
    
     return (
       <div>
