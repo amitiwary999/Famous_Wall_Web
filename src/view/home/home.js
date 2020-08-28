@@ -7,6 +7,8 @@ import FamousCardView from './FamousCardView'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchFamousPosts } from '../../redux/action/homeAction'
 import firebase from '../../firebase/Firebase'
+import UploadMedia from './UploadMedia'
+import { VIDEO_MEDIA, IMAGE_MEDIA } from '../../common/util'
 
 const Home = () => {
   const {famousPosts, lastItem, hasMoreItems} = useSelector(state => ({
@@ -14,6 +16,9 @@ const Home = () => {
     lastItem: state.home.lastItem,
     hasMoreItems: state.home.hasMoreItems
   }))
+  const [selectedMediaType, setSelectedMediaType] = useState('')
+  const [selectedMediaFile, setSelectedMediaFile] = useState('')
+  const [showSelectedMediaCard, setShowSelectedMediaCard] = useState(false)
   let dispatch = useDispatch()
 
    const updateItemDesign = () => {
@@ -31,11 +36,11 @@ const Home = () => {
      dispatch(fetchFamousPosts(lastItem))
    }
 
-  const uploadTask = (file) => {
+  const uploadTask = () => {
        let time = new Date().getTime();
-       console.log(file);
+       console.log(selectedMediaFile);
        const storage = firebase.storage();
-       const uploadTask = storage.ref(`video/${time + file.name}`).put(file);
+       const uploadTask = storage.ref(`${selectedMediaType}/${time + selectedMediaFile.name}`).put(selectedMediaFile);
        uploadTask.on(
          "state_changed",
          (snapshot) => {},
@@ -45,8 +50,8 @@ const Home = () => {
          },
          () => {
            storage
-             .ref("video")
-             .child(time + file.name)
+             .ref(selectedMediaType)
+             .child(time + selectedMediaFile.name)
              .getDownloadURL()
              .then((url) => {
                console.log(url);
@@ -59,12 +64,21 @@ const Home = () => {
          }
        );
     };
-   
+
+    const closeSelectedMediaCard = () => {
+      setShowSelectedMediaCard(false)
+    }
+
     return (
       <div>
         <Card>
           <div className="d-flex justify-content-between">
-            <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+            <Dropzone onDrop={(acceptedFiles) => {
+              console.log(acceptedFiles)
+              setSelectedMediaFile(acceptedFiles[0])
+              setSelectedMediaType(VIDEO_MEDIA)
+              setShowSelectedMediaCard(true)
+            }}>
               {({ getRootProps, getInputProps }) => (
                 <section>
                   <div {...getRootProps()}>
@@ -77,7 +91,12 @@ const Home = () => {
                 </section>
               )}
             </Dropzone>
-            <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+            <Dropzone onDrop={(acceptedFiles) => {
+              console.log(acceptedFiles)
+              setSelectedMediaFile(acceptedFiles[0])
+              setSelectedMediaType(IMAGE_MEDIA)
+              setShowSelectedMediaCard(true)
+            }}>
               {({ getRootProps, getInputProps }) => (
                 <section>
                   <div {...getRootProps()}>
@@ -113,6 +132,14 @@ const Home = () => {
         >
           {updateItemDesign}
         </InfiniteScroll>
+        {showSelectedMediaCard && (
+          <UploadMedia
+          mediaType = {selectedMediaType}
+          file = {selectedMediaFile}
+          closeSelectedMedia = {() => closeSelectedMediaCard()}
+          uploadMedia={uploadTask}
+          />
+        )}
       </div>
     );
 }
