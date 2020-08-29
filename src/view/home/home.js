@@ -73,7 +73,7 @@ const Home = () => {
       <div>
         <Card>
           <div className="d-flex justify-content-between">
-            <Dropzone onDrop={(acceptedFiles) => {
+            <Dropzone accept='video/*' onDrop={(acceptedFiles) => {
               console.log(acceptedFiles)
               setSelectedMediaFile(acceptedFiles[0])
               setSelectedMediaType(VIDEO_MEDIA)
@@ -91,7 +91,7 @@ const Home = () => {
                 </section>
               )}
             </Dropzone>
-            <Dropzone onDrop={(acceptedFiles) => {
+            <Dropzone accept='image/*' onDrop={(acceptedFiles) => {
               console.log(acceptedFiles)
               setSelectedMediaFile(acceptedFiles[0])
               setSelectedMediaType(IMAGE_MEDIA)
