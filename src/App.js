@@ -6,13 +6,16 @@ import {
   Redirect,
   Switch,
 } from "react-router-dom";
-
+import axios from 'axios'
 const Home = lazy(() => import('./view/home/home'))
 const Login = lazy(() =>
   import('./view/login/Login')
 );
 
 function App() {
+  axios.defaults.headers.post['Content-Type'] = 'application/json';
+  axios.defaults.baseURL = 'https://expinf.firebaseapp.com/';
+
   const pages = [
     {
       pageLink: "/",

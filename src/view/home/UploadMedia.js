@@ -1,23 +1,45 @@
 import React, { useState } from 'react'
-import { IMAGE_MEDIA, VIDEO_MEDIA } from '../../common/util';
-import { Modal, ModalHeader, ModalBody, Row, Col, Button } from 'reactstrap';
+import { IMAGE_MEDIA, VIDEO_MEDIA, authToken, getHash } from '../../common/util';
+import { Modal, ModalHeader, ModalBody, Row, Col, Button, Spinner } from 'reactstrap';
 import firebase from '../../firebase/Firebase'
+import axios from 'axios'
 
 const UploadMedia = (props) => {
     const [mediaType, setMediaType] = useState(props.selectedMediaType? props.selectedMediaType:IMAGE_MEDIA)
     const [postText, setPostText] = useState('')
     let selectedMediaFile = props.file;
     const [mediaUrl, setMediaUrl] = useState('')
+    const [loader, setLoader] = useState(true)
 
     const close = () => {
         props.closeSelectedMedia()
     }
-    const uploadMedia = () => {
-        props.uploadMedia()
-    }
 
     const sendPost = () =>{
-        let data = {}
+        setLoader(true)
+        authToken().then(res => {
+            let userId = res.userId;
+            let token = res.token;
+            let postId = new Date().now+'_'+getHash(userId)
+            let data = {
+                mimeType: selectedMediaFile.type,
+                mediaUrl: mediaUrl,
+                mediaThumbUrl: '',
+                desc: postText,
+                postId: postId
+            }
+            axios.defaults.headers.common['Authorization'] = token;
+            axios.post('setPostSql', data).then(res => {
+                setLoader(false)
+                close()
+            }).catch(error => {
+                setLoader(false)
+                console.log(error)
+            })
+        }).catch(error => {
+           setLoader(false)
+            console.log(error)
+        })
     }
 
     const uploadTask = () => {
@@ -40,9 +62,10 @@ const UploadMedia = (props) => {
                     .then((url) => {
                         console.log(url);
                         setMediaUrl(url)
+                        sendPost()
                     })
                     .catch((err) => {
-                        closeSelectedMediaCard()
+                        props.closeSelectedMedia()
                         console.log(err);
                     });
             }
@@ -58,7 +81,7 @@ const UploadMedia = (props) => {
                 <Row>
                     <Col md={6} className="text-center">
                         {(mediaType == VIDEO_MEDIA) && <video 
-                            src={URL.createObjectURL(props.file)}
+                            src={props.file}
                             style={{ maxWidth: '460px', height: 'auto' }}
                             controls={false}
                             autoPlay={false}
@@ -81,9 +104,10 @@ const UploadMedia = (props) => {
                             style={{ width: '200px' }}
                             color="primary"
                             type="submit"
-                            onClick={uploadMedia}>
+                            onClick={uploadTask}>
                             upload
                         </Button>
+                        {loader && <Spinner />}
                     </Col>
                 </Row>
             </ModalBody>

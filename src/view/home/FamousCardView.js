@@ -2,9 +2,10 @@ import React from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
 import { Col, Card } from 'reactstrap';
 
-const FamousCardView = () => {
+const FamousCardView = (props) => {
     return (
       <div className="container">
+        {console.log("data in card "+JSON.stringify(props))}
         <Col md={6} className="mx-auto">
         <Card>
             <div className="row">

@@ -5,14 +5,14 @@ import { Video, Image, Music } from 'react-feather'
 import Dropzone from 'react-dropzone'
 import FamousCardView from './FamousCardView'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchFamousPosts } from '../../redux/action/homeAction'
-import firebase from '../../firebase/Firebase'
+import axios from 'axios';
 import UploadMedia from './UploadMedia'
-import { VIDEO_MEDIA, IMAGE_MEDIA } from '../../common/util'
+import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash } from '../../common/util'
+import { fetchFamousPosts } from '../../redux/action/homeAction'
 
 const Home = () => {
   const {famousPosts, lastItem, hasMoreItems} = useSelector(state => ({
-    famousPost: state.home.famousPost,
+    famousPosts: state.home.famousPosts,
     lastItem: state.home.lastItem,
     hasMoreItems: state.home.hasMoreItems
   }))
@@ -21,49 +21,10 @@ const Home = () => {
   const [showSelectedMediaCard, setShowSelectedMediaCard] = useState(false)
   let dispatch = useDispatch()
 
-   const updateItemDesign = () => {
-     var items = []
-     famousPosts.map((item,index) => {
-       items.push(
-         <FamousCardView data={item}/>
-       )
-     })
-     return items
-   }
-
    const loadMoreItems = (page) => {
      console.log("page "+page)
      dispatch(fetchFamousPosts(lastItem))
    }
-
-  const uploadTask = () => {
-       let time = new Date().getTime();
-       console.log(selectedMediaFile);
-       const storage = firebase.storage();
-       const uploadTask = storage.ref(`${selectedMediaType}/${time + selectedMediaFile.name}`).put(selectedMediaFile);
-       uploadTask.on(
-         "state_changed",
-         (snapshot) => {},
-         (error) => {
-           console.log(error);
-           
-         },
-         () => {
-           storage
-             .ref(selectedMediaType)
-             .child(time + selectedMediaFile.name)
-             .getDownloadURL()
-             .then((url) => {
-               console.log(url);
-               
-             })
-             .catch((err) => {
-              
-               console.log(err);
-             });
-         }
-       );
-    };
 
     const closeSelectedMediaCard = () => {
       setShowSelectedMediaCard(false)
@@ -130,14 +91,15 @@ const Home = () => {
           hasMore={hasMoreItems}
           loader={<Spinner />}
         >
-          {updateItemDesign}
+          {famousPosts.map((item, index) => 
+            <FamousCardView data={item} />
+          )}
         </InfiniteScroll>
         {showSelectedMediaCard && (
           <UploadMedia
           mediaType = {selectedMediaType}
           file = {selectedMediaFile}
-          closeSelectedMedia = {() => closeSelectedMediaCard()}
-          uploadMedia={uploadTask}
+         closeSelectedMedia = {() => closeSelectedMediaCard()}
           />
         )}
       </div>
