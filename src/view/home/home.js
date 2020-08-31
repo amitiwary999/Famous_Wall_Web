@@ -47,6 +47,11 @@ const Home = () => {
       setShowSelectedMediaCard(false)
     }
 
+    const loadFamousCard = (item, index) => {
+      console.log("item " + item['mimeType'])
+       return < FamousCardView data = { item } />
+    }
+
     return (
       <div>
         <Card>
@@ -87,7 +92,7 @@ const Home = () => {
                 </section>
               )}
             </Dropzone>
-            <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+            <Dropzone accept='audio/*' onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
               {({ getRootProps, getInputProps }) => (
                 <section>
                   <div {...getRootProps()}>
@@ -110,7 +115,7 @@ const Home = () => {
         > */}
         {console.log("famous post "+famousPosts.length)}
           {famousPosts && famousPosts.map((item, index) => 
-            <FamousCardView data={item} />
+         loadFamousCard(item, index)
           )}
         {/* </InfiniteScroll> */}
         {showSelectedMediaCard && (

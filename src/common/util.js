@@ -1,8 +1,8 @@
 import firebase from '../firebase/Firebase';
 
-export const IMAGE_MEDIA = 'image_media'
-export const VIDEO_MEDIA = 'video_media'
-export const MUSIC_MEDIA = 'music_media'
+export const IMAGE_MEDIA = 'image'
+export const VIDEO_MEDIA = 'video'
+export const MUSIC_MEDIA = 'audio'
 export const PENDING = 'pending'
 export const SUCCESS = 'success'
 export const FAILURE = 'failure'

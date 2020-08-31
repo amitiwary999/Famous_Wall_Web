@@ -1,19 +1,47 @@
 import React from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
 import { Col, Card } from 'reactstrap';
+import { IMAGE_MEDIA, VIDEO_MEDIA, MUSIC_MEDIA } from '../../common/util';
 
 const FamousCardView = (props) => {
+  let data = props.data;
+  let mimeType = data.mimeType;
+  let mediaUrl = data.mediaUrl;
+  let desc = data.description;
+  let mediaTYpe = IMAGE_MEDIA
+  if(mimeType.includes(IMAGE_MEDIA)){
+    mediaTYpe = IMAGE_MEDIA
+  }else if(mimeType.includes(VIDEO_MEDIA)){
+    mediaTYpe = VIDEO_MEDIA
+  }else if(mimeType.includes(MUSIC_MEDIA)){
+    mediaTYpe = MUSIC_MEDIA
+  }
     return (
-      <div className="container">
+      <div className="container my-2">
         {/* {console.log("data in card "+JSON.stringify(props))} */}
         <Col md={6} className="mx-auto">
         <Card>
             <div className="row">
 
             </div>
-            <div>
-            <img src={imgPic} style={{width: 'auto', height: 'auto', maxHeight: '640px', minWidth: '120px'}} />
+            <div className="my-2">
+
+              {(mediaTYpe == IMAGE_MEDIA) && <img 
+              src={mediaUrl} 
+              className="rounded-sm mx-2 rounded-lg"
+              style={{ height: 'auto', maxHeight: '460px' }} />}
+
+              {(mediaTYpe == VIDEO_MEDIA) && <video
+                src={mediaUrl}
+                style={{ maxWidth: '460px', height: 'auto' }}
+                controls={true}
+                autoPlay={false}
+                className="rounded-sm mx-2 rounded-lg"
+              />}
             </div>
+            {desc && <div className="mt-2 mx-2">
+               <p className="float-left font-weight-bold">{desc}</p>
+            </div>}
             
             <div className="row">
                 
