@@ -7,25 +7,42 @@ import FamousCardView from './FamousCardView'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios';
 import UploadMedia from './UploadMedia'
-import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash } from '../../common/util'
+import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE } from '../../common/util'
 import { fetchFamousPosts } from '../../redux/action/homeAction'
 
 const Home = () => {
-  const {famousPosts, lastItem, hasMoreItems} = useSelector(state => ({
+  const {famousPosts, lastItemId, hasMoreItems, loadItemStatus} = useSelector(state => ({
     famousPosts: state.home.famousPosts,
-    lastItem: state.home.lastItem,
-    hasMoreItems: state.home.hasMoreItems
+    lastItemId: state.home.lastItemId,
+    hasMoreItems: state.home.hasMoreItems,
+    loadItemStatus: state.home.loadIteStatus
   }))
   const [selectedMediaType, setSelectedMediaType] = useState('')
   const [selectedMediaFile, setSelectedMediaFile] = useState('')
   const [showSelectedMediaCard, setShowSelectedMediaCard] = useState(false)
   let dispatch = useDispatch()
 
-   const loadMoreItems = (page) => {
-     console.log("page "+page)
-     dispatch(fetchFamousPosts(lastItem))
-   }
+  useEffect(() => {
+    dispatch(fetchFamousPosts(lastItemId))
+  }, [])
+  //  const loadMoreItems = (page) => {
+  //    console.log("page "+page)
+  //    dispatch(fetchFamousPosts(lastItemId))
+  //  }
 
+  useEffect(() => {
+    console.log("home posts "+JSON.stringify(famousPosts))
+  },[famousPosts])
+
+  useEffect(() => {
+    if(loadItemStatus == PENDING){
+
+    }else if(loadItemStatus == SUCCESS){
+
+    }else if(loadItemStatus == FAILURE){
+      
+    }
+  }, [loadItemStatus])
     const closeSelectedMediaCard = () => {
       setShowSelectedMediaCard(false)
     }
@@ -85,16 +102,17 @@ const Home = () => {
             </Dropzone>
           </div>
         </Card>
-        <InfiniteScroll
+        {/* <InfiniteScroll
           pageStart={0}
           loadMore={loadMoreItems}
           hasMore={hasMoreItems}
           loader={<Spinner />}
-        >
-          {famousPosts.map((item, index) => 
+        > */}
+        {console.log("famous post "+famousPosts.length)}
+          {famousPosts && famousPosts.map((item, index) => 
             <FamousCardView data={item} />
           )}
-        </InfiniteScroll>
+        {/* </InfiniteScroll> */}
         {showSelectedMediaCard && (
           <UploadMedia
           mediaType = {selectedMediaType}

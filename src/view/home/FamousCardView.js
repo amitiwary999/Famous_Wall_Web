@@ -5,7 +5,7 @@ import { Col, Card } from 'reactstrap';
 const FamousCardView = (props) => {
     return (
       <div className="container">
-        {console.log("data in card "+JSON.stringify(props))}
+        {/* {console.log("data in card "+JSON.stringify(props))} */}
         <Col md={6} className="mx-auto">
         <Card>
             <div className="row">
