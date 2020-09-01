@@ -8,6 +8,8 @@ const FamousCardView = (props) => {
   let mimeType = data.mimeType;
   let mediaUrl = data.mediaUrl;
   let desc = data.description;
+  let userDp = data.userDp;
+  let userName = data.userName;
   let mediaTYpe = IMAGE_MEDIA
   if(mimeType.includes(IMAGE_MEDIA)){
     mediaTYpe = IMAGE_MEDIA
@@ -18,11 +20,14 @@ const FamousCardView = (props) => {
   }
     return (
       <div className="container my-2">
-        {/* {console.log("data in card "+JSON.stringify(props))} */}
+        {console.log("data in card "+JSON.stringify(props))}
         <Col md={6} className="mx-auto">
         <Card>
-            <div className="row">
-
+            <div className="row ml-3 mt-2">
+              <img src={userDp} 
+                className="rounded-sm mx-2 rounded-lg"
+              style={{height: '36px', width: '36px'}}/>
+              <p className="my-auto font-weight-bold">{userName}</p>
             </div>
             <div className="my-2">
 

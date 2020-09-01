@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { Spinner, Card, Badge } from 'reactstrap'
+import { Spinner, Card, Badge, Col } from 'reactstrap'
 import { Video, Image, Music } from 'react-feather'
 import Dropzone from 'react-dropzone'
 import FamousCardView from './FamousCardView'
@@ -54,8 +54,10 @@ const Home = () => {
 
     return (
       <div>
+        <Col md={6} className="mx-auto mt-2">
         <Card>
-          <div className="d-flex justify-content-between">
+          <p className="font-weight-bold">Make yourself famous</p>
+          <div className="d-flex justify-content-between pl-2 pr-2">
             <Dropzone accept='video/*' onDrop={(acceptedFiles) => {
               console.log(acceptedFiles)
               setSelectedMediaFile(acceptedFiles[0])
@@ -107,6 +109,7 @@ const Home = () => {
             </Dropzone>
           </div>
         </Card>
+        </Col>
         {/* <InfiniteScroll
           pageStart={0}
           loadMore={loadMoreItems}
