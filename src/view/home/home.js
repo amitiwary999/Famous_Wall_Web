@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { Spinner, Card, Badge, Col } from 'reactstrap'
 import { Video, Image, Music } from 'react-feather'
@@ -9,8 +9,11 @@ import axios from 'axios';
 import UploadMedia from './UploadMedia'
 import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE } from '../../common/util'
 import { fetchFamousPosts } from '../../redux/action/homeAction'
+import { AuthContext } from '../../firebase/Auth'
 
 const Home = () => {
+  const { currentUser } = useContext(AuthContext);
+
   const {famousPosts, lastItemId, hasMoreItems, loadItemStatus} = useSelector(state => ({
     famousPosts: state.home.famousPosts,
     lastItemId: state.home.lastItemId,
@@ -116,7 +119,6 @@ const Home = () => {
           hasMore={hasMoreItems}
           loader={<Spinner />}
         > */}
-        {console.log("famous post "+famousPosts.length)}
           {famousPosts && famousPosts.map((item, index) => 
          loadFamousCard(item, index)
           )}

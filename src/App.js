@@ -7,6 +7,7 @@ import {
   Switch,
 } from "react-router-dom";
 import axios from 'axios'
+import { AuthProvider } from "./firebase/Auth";
 const Home = lazy(() => import('./view/home/home'))
 const Login = lazy(() =>
   import('./view/login/Login')
@@ -28,31 +29,33 @@ function App() {
     }
   ];
   return (
-    <div className="App">
-      <Suspense fallback={<div />}>
-        <Router>
-          <Route
-            render={({ location }) => (
-              <React.Fragment>
-                <Switch location={location}>
-                  {pages.map((page, index) => {
-                    return (
-                      <Route
-                        exact
-                        path={page.pageLink}
-                        render={({ match }) => <page.view />}
-                        key={index}
-                      />
-                    );
-                  })}
-                  <Redirect to="/" />
-                </Switch>
-              </React.Fragment>
-            )}
-          />
-        </Router>
-      </Suspense>
-    </div>
+    <AuthProvider>
+      <div className="App">
+        <Suspense fallback={<div />}>
+          <Router>
+            <Route
+              render={({ location }) => (
+                <React.Fragment>
+                  <Switch location={location}>
+                    {pages.map((page, index) => {
+                      return (
+                        <Route
+                          exact
+                          path={page.pageLink}
+                          render={({ match }) => <page.view />}
+                          key={index}
+                        />
+                      );
+                    })}
+                    <Redirect to="/" />
+                  </Switch>
+                </React.Fragment>
+              )}
+            />
+          </Router>
+        </Suspense>
+      </div>
+    </AuthProvider>
   );
 }
 
