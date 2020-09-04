@@ -1,19 +1,49 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { IMAGE_MEDIA, VIDEO_MEDIA, authToken, getHash } from '../../common/util';
 import { Modal, ModalHeader, ModalBody, Row, Col, Button, Spinner } from 'reactstrap';
 import firebase from '../../firebase/Firebase'
 import axios from 'axios'
 
 const UploadMedia = (props) => {
-    const [mediaType, setMediaType] = useState(props.selectedMediaType? props.selectedMediaType:IMAGE_MEDIA)
+    const [mediaType, setMediaType] = useState(props.mediaType? props.mediaType:IMAGE_MEDIA)
     const [postText, setPostText] = useState('')
     let selectedMediaFile = props.file;
     const [mediaUrl, setMediaUrl] = useState('')
-    const [loader, setLoader] = useState(true)
+    const [loader, setLoader] = useState(false)
+    const [loadMedia, setLoadMedia] = useState(false)
+    const [mediaSrc, setMediaSrc] = useState('')
 
     const close = () => {
         props.closeSelectedMedia()
     }
+
+    useEffect(() => {
+        console.log("media type "+mediaType+" "+VIDEO_MEDIA)
+        if(mediaType === VIDEO_MEDIA){
+            const reader = new FileReader()
+            reader.onabort = () => {
+                setLoadMedia(true)
+                console.log('file reading was aborted')
+            }
+            reader.onerror = () => {
+                setLoadMedia(true)
+                console.log('file reading has failed')
+            }
+            reader.onload = (e) => {
+                // Do whatever you want with the file contents
+                const binaryStr = e.target.result
+                var blob = new Blob([binaryStr], { type: props.file.type })     // create a blob of buffer
+                let url = URL.createObjectURL(blob)  
+                console.log(url +" "+binaryStr)
+                setMediaSrc(url)
+                setLoadMedia(true)
+            }
+            reader.readAsArrayBuffer(props.file)
+        }else{
+            setMediaSrc(URL.createObjectURL(props.file))
+            setLoadMedia(true)
+        }
+    },[mediaType, props.file])
 
     const sendPost = () =>{
         setLoader(true)
@@ -81,15 +111,14 @@ const UploadMedia = (props) => {
                 <Row>
                     <Col md={6} className="text-center">
                         {(mediaType == VIDEO_MEDIA) && <video 
-                            src={props.file}
                             style={{ maxWidth: '460px', height: 'auto' }}
-                            controls={false}
+                            src={mediaSrc}
+                            controls={true}
                             autoPlay={false}
-                            className="rounded-sm mr-1 rounded-lg"
-                            />
+                            className="rounded-sm mr-1 rounded-lg"/>
                         }
                         {(mediaType === IMAGE_MEDIA) && <img 
-                            src={URL.createObjectURL(props.file)}
+                            src={mediaSrc}
                             style={{ maxWidth: '460px', height: 'auto'}}
                         />}
                         <input 
@@ -107,7 +136,7 @@ const UploadMedia = (props) => {
                             onClick={uploadTask}>
                             upload
                         </Button>
-                        {loader && <Spinner />}
+                        {(loader || !loadMedia)&& <Spinner />}
                     </Col>
                 </Row>
             </ModalBody>

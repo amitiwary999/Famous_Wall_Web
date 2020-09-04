@@ -22,7 +22,7 @@ const FamousCardView = (props) => {
   }
     return (
       <div className="container my-2">
-        {console.log("data in card " + JSON.stringify(props))}
+        {/* {console.log("data in card " + JSON.stringify(props))} */}
         <Col md={6} className="mx-auto">
           <Card>
             <div className="row ml-3 mt-2">

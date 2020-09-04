@@ -10,6 +10,7 @@ import UploadMedia from './UploadMedia'
 import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE } from '../../common/util'
 import { fetchFamousPosts } from '../../redux/action/homeAction'
 import { AuthContext } from '../../firebase/Auth'
+import Login from '../login/Login'
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -23,6 +24,7 @@ const Home = () => {
   const [selectedMediaType, setSelectedMediaType] = useState('')
   const [selectedMediaFile, setSelectedMediaFile] = useState('')
   const [showSelectedMediaCard, setShowSelectedMediaCard] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
   let dispatch = useDispatch()
 
   useEffect(() => {
@@ -55,6 +57,18 @@ const Home = () => {
        return < FamousCardView data = { item } />
     }
 
+    const dropzoneClick = (event) => {
+      console.log("dropzone "+event+" "+currentUser)
+      if(!currentUser){
+        event.stopPropagation()
+        setShowLogin(true)
+      }
+    }
+
+    const hideLogin = () => {
+      setShowLogin(false);
+    }
+
     return (
       <div>
         <Col md={6} className="mx-auto mt-2">
@@ -69,7 +83,7 @@ const Home = () => {
             }}>
               {({ getRootProps, getInputProps }) => (
                 <section>
-                  <div {...getRootProps()}>
+                  <div style={{ cursor: 'pointer' }} {...getRootProps({ onClick: event => dropzoneClick(event)})}>
                     <input {...getInputProps()} />
                     <Badge pill color="info" className="mr-1 mb-1">
                       <Video size={16} className="mr-2" />
@@ -87,7 +101,7 @@ const Home = () => {
             }}>
               {({ getRootProps, getInputProps }) => (
                 <section>
-                  <div {...getRootProps()}>
+                  <div style={{ cursor: 'pointer' }} {...getRootProps({ onClick: event => dropzoneClick(event) })}>
                     <input {...getInputProps()} />
                     <Badge pill color="info" className="mr-1 mb-1">
                       <Image size={16} className="mr-2" />
@@ -100,7 +114,7 @@ const Home = () => {
             <Dropzone accept='audio/*' onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
               {({ getRootProps, getInputProps }) => (
                 <section>
-                  <div {...getRootProps()}>
+                  <div style={{ cursor: 'pointer' }} {...getRootProps({ onClick: event => dropzoneClick(event)})}>
                     <input {...getInputProps()} />
                     <Badge pill color="info" className="mr-1 mb-1">
                       <Music size={16} className="mr-2" />
@@ -129,6 +143,9 @@ const Home = () => {
           file = {selectedMediaFile}
          closeSelectedMedia = {() => closeSelectedMediaCard()}
           />
+        )}
+        {showLogin && (
+          <Login closeLogin={() => hideLogin()}/>
         )}
       </div>
     );

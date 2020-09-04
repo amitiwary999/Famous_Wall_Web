@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
-import { Col, Card, Container, Input, Button } from 'reactstrap';
+import { Col, Card, Container, Input, Button, Modal, ModalBody } from 'reactstrap';
 import firebase from '../../firebase/Firebase'
 import logo from '../../img/unicoon.png'
 
 
-const Login = () => {
+const Login = (props) => {
     const [email, setEmail] = useState('');
 
     const handleChange = e => {
@@ -41,14 +41,20 @@ const Login = () => {
             .auth()
             .signInWithPopup(provider)
             .then(result => {
-                
+                props.closeLogin();
             })
             .catch(error => {
                 console.log(error);
             });
     };
 
+    const close = () => {
+        props.closeLogin();
+    }
+
     return(
+        <Modal isOpen={true} toggle={close} className="modal-lg">
+            <ModalBody>
         <div className="d-flex" style={{ height: '100vh', background: 'grey' }}>
             <Col md="8" className="text-center justify-content-center align-self-center offset-md-2">
                 <Card className="pt-2 pb-2">
@@ -88,6 +94,8 @@ const Login = () => {
                 </Card>
             </Col>
         </div>
+        </ModalBody>
+       </Modal>
     )
 }
 
