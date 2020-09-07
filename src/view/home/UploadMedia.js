@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { IMAGE_MEDIA, VIDEO_MEDIA, authToken, getHash } from '../../common/util';
 import { Modal, ModalHeader, ModalBody, Row, Col, Button, Spinner } from 'reactstrap';
 import firebase from '../../firebase/Firebase'
 import axios from 'axios'
+import { AuthContext } from '../../firebase/Auth';
 
 const UploadMedia = (props) => {
+    const {currentUser} = useContext(AuthContext)
     const [mediaType, setMediaType] = useState(props.mediaType? props.mediaType:IMAGE_MEDIA)
     const [postText, setPostText] = useState('')
     let selectedMediaFile = props.file;
@@ -45,20 +47,24 @@ const UploadMedia = (props) => {
         }
     },[mediaType, props.file])
 
-    const sendPost = () =>{
-        setLoader(true)
-        authToken().then(res => {
-            let userId = res.userId;
-            let token = res.token;
-            let postId = new Date().now+'_'+getHash(userId)
+    const updatePostText = (event) => {
+        let value = event.target.value;
+        setPostText(value);
+    }
+
+    const sendPost = (url) =>{
+        currentUser.getIdToken().then(token => {
+            let userId = currentUser.uid;
+            let postId = Date.now() + '_' + getHash(userId)
             let data = {
                 mimeType: selectedMediaFile.type,
-                mediaUrl: mediaUrl,
+                mediaUrl: url,
                 mediaThumbUrl: '',
                 desc: postText,
                 postId: postId
             }
-            axios.defaults.headers.common['Authorization'] = token;
+            console.log("token "+token+" "+JSON.stringify(data))
+            axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
             axios.post('setPostSql', data).then(res => {
                 setLoader(false)
                 close()
@@ -73,6 +79,7 @@ const UploadMedia = (props) => {
     }
 
     const uploadTask = () => {
+        setLoader(true);
         let time = new Date().getTime();
         console.log(selectedMediaFile);
         const storage = firebase.storage();
@@ -82,7 +89,7 @@ const UploadMedia = (props) => {
             (snapshot) => { },
             (error) => {
                 console.log(error);
-
+                setLoader(false)
             },
             () => {
                 storage
@@ -91,12 +98,12 @@ const UploadMedia = (props) => {
                     .getDownloadURL()
                     .then((url) => {
                         console.log(url);
-                        setMediaUrl(url)
-                        sendPost()
+                        sendPost(url)
                     })
                     .catch((err) => {
                         props.closeSelectedMedia()
                         console.log(err);
+                        setLoader(false)
                     });
             }
         );
@@ -126,7 +133,7 @@ const UploadMedia = (props) => {
                             value={postText}
                             placeholder="your one liner"
                             className="font-weight-bold"
-                            onChange={setPostText}
+                            onChange={(event) => updatePostText(event)}
                             />
                         <Button
                             className="mx-auto mt-2"

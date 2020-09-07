@@ -33,7 +33,7 @@ const FamousCardView = (props) => {
               />
               <div className="float-left ">
                 <p className="my-auto font-weight-bold">{userName}</p>
-                <p>{moment(date).fromNow()}</p>
+                <p className='float-left' style={{fontSize: '12px'}}>{moment(date).fromNow()}</p>
               </div>
             </div>
             <div className="my-2">
