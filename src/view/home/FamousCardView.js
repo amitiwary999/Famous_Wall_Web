@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
 import { Col, Card } from 'reactstrap';
 import { IMAGE_MEDIA, VIDEO_MEDIA, MUSIC_MEDIA } from '../../common/util';
+import { Heart } from 'react-feather';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+import { AuthContext } from '../../firebase/Auth';
+import { likeOrUnlikePost } from '../../redux/action/homeAction';
 
 const FamousCardView = (props) => {
+  const { currentUser } = useContext(AuthContext);
+
   let data = props.data;
   let mimeType = data.mimeType;
   let mediaUrl = data.mediaUrl;
@@ -12,6 +18,8 @@ const FamousCardView = (props) => {
   let userDp = data.userDp;
   let userName = data.userName;
   let date = data.date;
+  let heartIconColor = data.isLiked?'red': 'white'
+  let heartIconBorderColor = data.isLiked?'red':'black'
   let mediaTYpe = IMAGE_MEDIA
   if(mimeType.includes(IMAGE_MEDIA)){
     mediaTYpe = IMAGE_MEDIA
@@ -19,6 +27,24 @@ const FamousCardView = (props) => {
     mediaTYpe = VIDEO_MEDIA
   }else if(mimeType.includes(MUSIC_MEDIA)){
     mediaTYpe = MUSIC_MEDIA
+  }
+
+  let postId = data.postId;
+  let pos = props.pos;
+  let incr = data.isLiked?(data.isLiked == 0)?1:0:0
+
+  let dispatch  = useDispatch();
+
+  const updateLikePost = () => {
+    if(currentUser){
+    currentUser.getIdToken().then(token => {
+      dispatch(likeOrUnlikePost(postId, incr, pos, token))
+    }).catch(error => {
+      console.log(error)
+    })
+  }else{
+    console.log("please login")
+  }
   }
     return (
       <div className="container my-2">
@@ -61,7 +87,9 @@ const FamousCardView = (props) => {
               </div>
             )}
 
-            <div className="row"></div>
+            <div className="row justify-content-center p-2" onClick={updateLikePost}>
+              <Heart style={{fill: heartIconColor, color: heartIconBorderColor}}/>
+            </div>
           </Card>
         </Col>
       </div>

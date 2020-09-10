@@ -30,6 +30,30 @@ export const homeReducer = (state = INITIAL_STATE, action) => {
         case 'LOAD_NEW_POSTS_PENDING':
             return {...state, loadItemStatus: PENDING}    
 
+        case 'POST_LIKE_FAILED':
+            let pos = payload.pos;
+            let postId = payload.postId;
+            let item = state.famousPosts[pos];
+            if(item && postId && item.postId == postId){
+                item.isLiked = 0;
+                let updatedPosts = [...state.famousPosts.slice(0, pos), item, ...state.famousPosts.slice(pos+1)]
+                return {...state, famousPosts: updatedPosts}
+            }else{
+                return state;
+            }
+            
+        case 'POST_LIKE_SUCCESS':
+            let position = payload.pos;
+            let likePostId = payload.postId;
+            let likeItem = state.famousPosts[position];
+            if(likeItem && likePostId && likeItem.postId == likePostId){
+                likeItem.isLiked = likeItem.isLiked == 0? 1: 0;
+                let updatedPosts = [...state.famousPosts.slice(0, position), likeItem, ...state.famousPosts.slice(position+1)]
+                return {...state, famousPosts: updatedPosts}
+            }else{
+                return state;
+            }  
+
       default:
           return state;    
     }

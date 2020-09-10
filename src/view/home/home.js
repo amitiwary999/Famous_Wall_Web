@@ -30,14 +30,6 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchFamousPosts(lastItemId))
   }, [])
-  //  const loadMoreItems = (page) => {
-  //    console.log("page "+page)
-  //    dispatch(fetchFamousPosts(lastItemId))
-  //  }
-
-  useEffect(() => {
-    console.log("home posts "+JSON.stringify(famousPosts))
-  },[famousPosts])
 
   useEffect(() => {
     if(loadItemStatus == PENDING){
@@ -54,7 +46,7 @@ const Home = () => {
 
     const loadFamousCard = (item, index) => {
       console.log("item " + item['mimeType'])
-       return < FamousCardView data = { item } />
+       return < FamousCardView data = { item } pos={index} />
     }
 
     const dropzoneClick = (event) => {

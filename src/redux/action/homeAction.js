@@ -28,3 +28,25 @@ export const fetchFamousPosts = (lastItemId, token) => dispatch => {
         console.log(error)
     })
 }
+
+export const likeOrUnlikePost = (postId, incr, pos, token)=> dispatch =>{
+    dispatch({type: 'POST_LIKE_SUCCESS', payload: {postId: postId, pos: pos}})
+
+    axios.defaults.headers.common['Authorization'] = token;
+    let data = {
+        postId: postId,
+        increment: incr
+    }
+
+    axios.post('setPostLikeSql', data).then(res => {
+        if(res && res.data){
+
+        }else{
+            dispatch({type: 'POST_LIKE_FAILED', payload: {postId: postId, pos: pos}})
+        }
+    }).catch(error => {
+        console.log("error");
+                    dispatch({type: 'POST_LIKE_FAILED', payload: {postId: postId, pos: pos}})
+
+    })
+}
