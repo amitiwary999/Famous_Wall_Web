@@ -51,6 +51,7 @@ const FamousCardView = (props) => {
         {/* {console.log("data in card " + JSON.stringify(props))} */}
         <Col md={6} className="mx-auto">
           <Card>
+            <Col>
             <div className="row ml-3 mt-2">
               <img
                 src={userDp}
@@ -90,6 +91,7 @@ const FamousCardView = (props) => {
             <div className="row justify-content-center p-2" onClick={updateLikePost}>
               <Heart style={{fill: heartIconColor, color: heartIconBorderColor}}/>
             </div>
+            </Col>
           </Card>
         </Col>
       </div>

@@ -55,7 +55,8 @@ const UploadMedia = (props) => {
     const sendPost = (url) =>{
         currentUser.getIdToken().then(token => {
             let userId = currentUser.uid;
-            let postId = Date.now() + '_' + getHash(userId)
+            let currentDate = Date.now();
+            let postId = currentDate + '_' + getHash(userId)
             let data = {
                 mimeType: selectedMediaFile.type,
                 mediaUrl: url,

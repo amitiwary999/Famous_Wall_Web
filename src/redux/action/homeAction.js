@@ -32,12 +32,13 @@ export const fetchFamousPosts = (lastItemId, token) => dispatch => {
 export const likeOrUnlikePost = (postId, incr, pos, token)=> dispatch =>{
     dispatch({type: 'POST_LIKE_SUCCESS', payload: {postId: postId, pos: pos}})
 
-    axios.defaults.headers.common['Authorization'] = token;
+    axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
     let data = {
         postId: postId,
         increment: incr
     }
 
+    console.log("data "+JSON.stringify(data)+" "+token)
     axios.post('setPostLikeSql', data).then(res => {
         if(res && res.data){
 
@@ -45,8 +46,8 @@ export const likeOrUnlikePost = (postId, incr, pos, token)=> dispatch =>{
             dispatch({type: 'POST_LIKE_FAILED', payload: {postId: postId, pos: pos}})
         }
     }).catch(error => {
-        console.log("error");
-                    dispatch({type: 'POST_LIKE_FAILED', payload: {postId: postId, pos: pos}})
+        console.log("error "+error+" "+JSON.stringify(error.response));
+        dispatch({type: 'POST_LIKE_FAILED', payload: {postId: postId, pos: pos}})
 
     })
 }
