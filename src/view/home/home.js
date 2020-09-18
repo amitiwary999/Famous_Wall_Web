@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { Spinner, Card, Badge, Col, CardBody, Button } from 'reactstrap'
+import { Card, Badge, Col, CardBody, Button } from 'reactstrap'
 import { Video, Image, Music } from 'react-feather'
 import Dropzone from 'react-dropzone'
 import FamousCardView from './FamousCardView'
@@ -11,6 +11,7 @@ import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE
 import { fetchFamousPosts } from '../../redux/action/homeAction'
 import { AuthContext } from '../../firebase/Auth'
 import Login from '../login/Login'
+import Spinner from '../../firebase/LoadingSpinner';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -19,12 +20,13 @@ const Home = () => {
     famousPosts: state.home.famousPosts,
     lastItemId: state.home.lastItemId,
     hasMoreItems: state.home.hasMoreItems,
-    loadItemStatus: state.home.loadIteStatus
+    loadItemStatus: state.home.loadItemStatus
   }))
   const [selectedMediaType, setSelectedMediaType] = useState('')
   const [selectedMediaFile, setSelectedMediaFile] = useState('')
   const [showSelectedMediaCard, setShowSelectedMediaCard] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
+  const [showLoader, setShowLoader] = useState(false);
   let dispatch = useDispatch()
 
   useEffect(() => {
@@ -32,12 +34,13 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
+    console.log('lis '+loadItemStatus)
     if(loadItemStatus == PENDING){
-
+      setShowLoader(true);
     }else if(loadItemStatus == SUCCESS){
-
+      setShowLoader(false);
     }else if(loadItemStatus == FAILURE){
-      
+      setShowLoader(false);
     }
   }, [loadItemStatus])
     const closeSelectedMediaCard = () => {
@@ -163,6 +166,7 @@ const Home = () => {
           />
         )}
         {showLogin && <Login closeLogin={() => hideLogin()} />}
+        {showLoader && <Spinner />}
       </div>
     );
 }
