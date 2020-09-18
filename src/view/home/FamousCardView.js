@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
-import { Col, Card } from 'reactstrap';
+import { Col, Card, CardBody } from 'reactstrap';
 import { IMAGE_MEDIA, VIDEO_MEDIA, MUSIC_MEDIA } from '../../common/util';
 import { Heart } from 'react-feather';
 import moment from 'moment';
@@ -51,47 +51,60 @@ const FamousCardView = (props) => {
         {/* {console.log("data in card " + JSON.stringify(props))} */}
         <Col md={6} className="mx-auto">
           <Card>
-            <Col>
-            <div className="row ml-3 mt-2">
-              <img
-                src={userDp}
-                className="rounded-sm mx-2 rounded-lg"
-                style={{ height: "36px", width: "36px" }}
-              />
-              <div className="float-left ">
-                <p className="my-auto font-weight-bold">{userName}</p>
-                <p className='float-left' style={{fontSize: '12px'}}>{moment(date).fromNow()}</p>
-              </div>
-            </div>
-            <div className="my-2">
-              {mediaTYpe == IMAGE_MEDIA && (
-                <img
-                  src={mediaUrl}
-                  className="rounded-sm mx-2 rounded-lg"
-                  style={{ height: "auto", maxHeight: "460px" }}
-                />
-              )}
+            <CardBody>
+              <Col style={{ height: "auto", maxWidth: "460px" }}>
+                <div className="row ml-3 mt-2">
+                  <img
+                    src={userDp}
+                    className="rounded-sm mx-2 rounded-lg"
+                    style={{ height: "36px", width: "36px" }}
+                  />
+                  <div className="float-left ">
+                    <p className="my-auto font-weight-bold">{userName}</p>
+                    <p className="float-left" style={{ fontSize: "12px" }}>
+                      {moment(date).fromNow()}
+                    </p>
+                  </div>
+                </div>
+                <div className="my-2">
+                  {mediaTYpe == IMAGE_MEDIA && (
+                    <img
+                      src={mediaUrl}
+                      className="rounded-sm mx-2"
+                      style={{ height: "auto", maxWidth: "460px" }}
+                    />
+                  )}
 
-              {mediaTYpe == VIDEO_MEDIA && (
-                <video
-                  src={mediaUrl}
-                  style={{ maxWidth: "460px", height: "auto" }}
-                  controls={true}
-                  autoPlay={false}
-                  className="rounded-sm mx-2 rounded-lg"
-                />
-              )}
-            </div>
-            {desc && (
-              <div className="mt-2 mx-2">
-                <p className="float-left font-weight-bold">{desc}</p>
-              </div>
-            )}
+                  {mediaTYpe == VIDEO_MEDIA && (
+                    <video
+                      src={mediaUrl}
+                      style={{ maxWidth: "460px", height: "auto" }}
+                      controls={true}
+                      autoPlay={false}
+                      className="rounded-sm mx-2 rounded-lg"
+                      object-fit="cover"
+                    />
+                  )}
+                </div>
+                {desc && (
+                  <div className="mt-2 mx-2">
+                    <p className="float-left font-weight-bold">{desc}</p>
+                  </div>
+                )}
 
-            <div className="row justify-content-center p-2" onClick={updateLikePost}>
-              <Heart style={{fill: heartIconColor, color: heartIconBorderColor}}/>
-            </div>
-            </Col>
+                <div
+                  className="row justify-content-center p-2"
+                  onClick={updateLikePost}
+                >
+                  <Heart
+                    style={{
+                      fill: heartIconColor,
+                      color: heartIconBorderColor,
+                    }}
+                  />
+                </div>
+              </Col>
+            </CardBody>
           </Card>
         </Col>
       </div>
