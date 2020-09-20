@@ -31,7 +31,7 @@ const FamousCardView = (props) => {
 
   let postId = data.postId;
   let pos = props.pos;
-  let incr = data.isLiked?(data.isLiked == 0)?1:0:0
+  let incr = (data.isLiked == 0)?1:0
 
   let dispatch  = useDispatch();
 

@@ -30,7 +30,15 @@ const Home = () => {
   let dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchFamousPosts(lastItemId))
+    if(currentUser){
+      currentUser.getIdToken().then(token => {
+        dispatch(fetchFamousPosts(lastItemId, token))
+      }).catch(error => {
+        console.log(console.error());
+      })
+    }else{
+      dispatch(fetchFamousPosts(lastItemId));
+    }
   }, [])
 
   useEffect(() => {
