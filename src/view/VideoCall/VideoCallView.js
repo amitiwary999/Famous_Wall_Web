@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useLocation } from "react-router-dom";
 
-const VideoCallView = () => {
+const useQuery = () => new URLSearchParams(useLocation().search);
+
+const VideoCallView = props => {
       const jitsiContainerId = "jitsi-container-id";
       const [jitsi, setJitsi] = useState({});
+      let query = useQuery();
+      let roomname = query.get('r');
 
       useEffect(() => {
         initialiseJitsi();
@@ -32,6 +37,7 @@ const VideoCallView = () => {
         }
 
         const _jitsi = new window.JitsiMeetExternalAPI("meet.jit.si", {
+          roomName: roomname,
           parentNode: document.getElementById(jitsiContainerId),
         });
 

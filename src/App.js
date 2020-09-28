@@ -12,10 +12,11 @@ const Home = lazy(() => import('./view/home/home'))
 const Login = lazy(() =>
   import('./view/login/Login')
 );
+const videoCall = lazy(() => import('./view/VideoCall/VideoCallView'))
 
 function App() {
   axios.defaults.headers.post['Content-Type'] = 'application/json';
-  axios.defaults.baseURL = 'https://expinf.firebaseapp.com/';
+  axios.defaults.baseURL = "https://fwalls-dot-expinf.appspot.com/";
 
   const pages = [
     {
@@ -26,6 +27,11 @@ function App() {
       pageLink: "/login",
       view: Login,
       displayName: "Home",
+    },
+    {
+      pageLink: "/videocall",
+      view: videoCall,
+      displayName: 'VideoCall'
     }
   ];
   return (

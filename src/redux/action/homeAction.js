@@ -3,6 +3,7 @@ import firebase from '../../firebase/Firebase'
 
 export const fetchFamousPosts = (lastItemId, token) => dispatch => {
     dispatch({type: 'LOAD_NEW_POSTS_PENDING'})
+    console.log('token '+token)
     axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
     let data = {
         nextKey: lastItemId,

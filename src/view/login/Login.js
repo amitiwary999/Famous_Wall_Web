@@ -1,11 +1,31 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Col, Card, Container, Input, Button, Modal, ModalBody } from 'reactstrap';
+import { FAILURE, PENDING, SUCCESS } from '../../common/util';
 import firebase from '../../firebase/Firebase'
 import logo from '../../img/unicoon.png'
-
+import {setUser} from '../../redux/action/loginAction'
 
 const Login = (props) => {
     const [email, setEmail] = useState('');
+    const [loader, setLoader] = useState(false);
+
+    const { loginStatus } = useSelector(state => ({
+        loginStatus: state.login.loginStatus
+    }))
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(loginStatus == PENDING){
+            setLoader(true);
+        }else if(loginStatus == SUCCESS){
+            setLoader(false);
+            props.closeLogin();
+        }else if(loginStatus == FAILURE){
+            setLoader(false);
+        }
+    }, [loginStatus]);
 
     const handleChange = e => {
         setEmail(e.target.value);
@@ -37,16 +57,46 @@ const Login = (props) => {
 
     const loginWithGoogle = () => {
         const provider = new firebase.auth.GoogleAuthProvider();
+        dispatch({type: 'LOGIN_PENDING'})
         firebase
             .auth()
             .signInWithPopup(provider)
             .then(result => {
-                props.closeLogin();
+                const { user } = result;
+                sendUserInfo(user);
             })
             .catch(error => {
                 console.log(error);
             });
     };
+
+    const sendUserInfo = firebaseUser => {
+        firebaseUser.getIdToken().then(token => {
+            let email = firebaseUser.email;
+            let photo = firebaseUser.photoURL;
+            let fullName = firebaseUser.displayName;
+            let data = {
+                name: fullName,
+                dp: photo,
+                email: email
+            }
+
+            dispatch(setUser(token, data))
+        }).catch(error => {
+            console.log(error);
+            logoutUser();
+        })
+    }
+
+    const logoutUser = () => {
+        firebase
+          .auth()
+          .signOut()
+          .then(() => {})
+          .catch((error) => {
+            console.log( error);
+          });
+    }
 
     const close = () => {
         props.closeLogin();
