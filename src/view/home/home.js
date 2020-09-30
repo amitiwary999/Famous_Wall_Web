@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios';
 import UploadMedia from './UploadMedia'
 import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE } from '../../common/util'
-import { fetchFamousPosts } from '../../redux/action/homeAction'
+import { fetchFamousPosts, fetchVideoRequest } from '../../redux/action/homeAction'
 import { AuthContext } from '../../firebase/Auth'
 import Login from '../login/Login'
 import Spinner from '../../firebase/LoadingSpinner';
@@ -27,12 +27,14 @@ const Home = () => {
   const [showSelectedMediaCard, setShowSelectedMediaCard] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
   const [showLoader, setShowLoader] = useState(false);
+  const [videoRequest, setVideoRequest] = useState([]);
   let dispatch = useDispatch()
 
   useEffect(() => {
     if(currentUser){
       currentUser.getIdToken().then(token => {
         dispatch(fetchFamousPosts(lastItemId, token))
+        getVideoRequest(token);
       }).catch(error => {
         console.log(console.error());
       })
@@ -40,6 +42,15 @@ const Home = () => {
       dispatch(fetchFamousPosts(lastItemId));
     }
   }, [])
+
+  const getVideoRequest = token => {
+    fetchVideoRequest(token).then(res => {
+      setVideoRequest(res);
+    }).catch(error => {
+      console.log(error);
+    })
+    
+  }
 
   useEffect(() => {
     console.log('lis '+loadItemStatus)
@@ -79,12 +90,13 @@ const Home = () => {
             <CardBody>
               <div className="d-flex justify-content-end mb-2">
                 <Badge color="success" className=" mr-1 mb-1">
-                  <Badge pill color="danger" className="p-1 badge-up float-right" style={{marginRight: -8, marginTop: -6, fontSize: '12px'}}>
-                    5
+                  {(videoRequest && videoRequest.length>0) && <Badge pill color="danger" className="p-1 badge-up float-right" style={{marginRight: -8, marginTop: -6, fontSize: '12px'}}>
+                    {videoRequest.length}
                   </Badge>
-                  <Col>
+                  }
+                  <Col className="p-2">
                     <Video size={16} />
-                    <p className="font-weight-bold">Accept request</p>
+                    <span className="font-weight-bold ml-1">Accept request</span>
                   </Col>
                 </Badge>
               </div>

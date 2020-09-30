@@ -32,7 +32,6 @@ const FamousCardView = (props) => {
   let postId = data.postId;
   let pos = props.pos;
   let incr = (data.isLiked == 0)?1:0
-
   let dispatch  = useDispatch();
 
   const updateLikePost = () => {
@@ -62,7 +61,8 @@ const FamousCardView = (props) => {
                   <div className="float-left ">
                     <p className="my-auto font-weight-bold">{userName}</p>
                     <p className="float-left" style={{ fontSize: "12px" }}>
-                      {moment(date).fromNow()}
+                      {moment(date, "x").fromNow()}
+                      {/**in response all is string so using x to format it */}
                     </p>
                   </div>
                 </div>

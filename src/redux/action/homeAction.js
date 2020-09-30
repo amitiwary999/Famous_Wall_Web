@@ -54,3 +54,36 @@ export const likeOrUnlikePost = (postId, incr, pos, token)=> dispatch =>{
 
     })
 }
+
+export const fetchVideoRequest = token => {
+    return new Promise((resolve, reject) => {
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        axios
+        .post("getVideoRequest")
+            .then((res) => {
+                if(res && res.data){
+                    resolve(res.data);
+                }else{
+                    reject('no data');
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                reject(error);
+            });
+
+    })
+}
+
+//data = {inviteeId: to whom wamt to send invite}
+export const postVideoCallRequest = (token, data) => {
+    return new Promise((resolve, reject) => {
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        axios.post("postVideoRequest")
+        .then(res => {
+            resolve('success')
+        }).catch(error => {
+            reject(error);
+        })
+    })
+}
