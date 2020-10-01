@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
-import { Col, Card, CardBody } from 'reactstrap';
+import { Col, Card, CardBody, Badge, Row } from 'reactstrap';
 import { IMAGE_MEDIA, VIDEO_MEDIA, MUSIC_MEDIA } from '../../common/util';
-import { Heart } from 'react-feather';
+import { Heart, Video } from 'react-feather';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import { AuthContext } from '../../firebase/Auth';
-import { likeOrUnlikePost } from '../../redux/action/homeAction';
+import { likeOrUnlikePost, postVideoCallRequest } from '../../redux/action/homeAction';
 
 const FamousCardView = (props) => {
   const { currentUser } = useContext(AuthContext);
@@ -28,7 +28,7 @@ const FamousCardView = (props) => {
   }else if(mimeType.includes(MUSIC_MEDIA)){
     mediaTYpe = MUSIC_MEDIA
   }
-
+  let creatorId = data.creatorId;
   let postId = data.postId;
   let pos = props.pos;
   let incr = (data.isLiked == 0)?1:0
@@ -45,6 +45,23 @@ const FamousCardView = (props) => {
     console.log("please login")
   }
   }
+
+
+  const requestVideoCall = () => {
+    let data = {
+      inviteeId: creatorId
+    }
+    currentUser.getIdToken().then(token => {
+      postVideoCallRequest(token, data).then(res => {
+        console.log('video call req '+res)
+      }).catch(error => {
+        console.log(error);
+      })
+    }).catch(error => {
+      console.log(error);
+    })
+  }
+
     return (
       <div className="container my-2">
         {/* {console.log("data in card " + JSON.stringify(props))} */}
@@ -91,18 +108,32 @@ const FamousCardView = (props) => {
                     <p className="float-left font-weight-bold">{desc}</p>
                   </div>
                 )}
-
-                <div
-                  className="row justify-content-center p-2"
-                  onClick={updateLikePost}
-                >
-                  <Heart
-                    style={{
-                      fill: heartIconColor,
-                      color: heartIconBorderColor,
-                    }}
-                  />
-                </div>
+                <Row>
+                  <div
+                    className="justify-content-left p-2 my-auto"
+                    onClick={updateLikePost}
+                  >
+                    <Heart
+                      style={{
+                        fill: heartIconColor,
+                        color: heartIconBorderColor,
+                      }}
+                    />
+                  </div>
+                  <div
+                    className="justify-content-right p-2"
+                    onClick={requestVideoCall}
+                  >
+                    <Badge color="info" className=" mr-1 mb-1">
+                      <Col className="p-2">
+                        <Video size={16} />
+                        <span className="font-weight-bold ml-1">
+                          Request call
+                        </span>
+                      </Col>
+                    </Badge>
+                  </div>
+                </Row>
               </Col>
             </CardBody>
           </Card>

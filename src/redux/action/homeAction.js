@@ -79,7 +79,7 @@ export const fetchVideoRequest = token => {
 export const postVideoCallRequest = (token, data) => {
     return new Promise((resolve, reject) => {
         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        axios.post("postVideoRequest")
+        axios.post("postVideoRequest", data)
         .then(res => {
             resolve('success')
         }).catch(error => {

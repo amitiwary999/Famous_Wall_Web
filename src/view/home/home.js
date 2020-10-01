@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { Card, Badge, Col, CardBody, Button, CardHeader } from 'reactstrap'
+import { Card, Badge, Col, CardBody, Button, CardHeader, UncontrolledDropdown, DropdownToggle, DropdownMenu, Row, Media } from 'reactstrap'
 import { Video, Image, Music } from 'react-feather'
 import Dropzone from 'react-dropzone'
 import FamousCardView from './FamousCardView'
@@ -12,6 +12,7 @@ import { fetchFamousPosts, fetchVideoRequest } from '../../redux/action/homeActi
 import { AuthContext } from '../../firebase/Auth'
 import Login from '../login/Login'
 import Spinner from '../../firebase/LoadingSpinner';
+import VideoRequestList from './VideoRequestList'
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -88,18 +89,37 @@ const Home = () => {
         <Col md={4} sm={6} className="mx-auto mt-2">
           <Card>
             <CardBody>
-              <div className="d-flex justify-content-end mb-2">
-                <Badge color="success" className=" mr-1 mb-1">
-                  {(videoRequest && videoRequest.length>0) && <Badge pill color="danger" className="p-1 badge-up float-right" style={{marginRight: -8, marginTop: -6, fontSize: '12px'}}>
-                    {videoRequest.length}
-                  </Badge>
-                  }
-                  <Col className="p-2">
-                    <Video size={16} />
-                    <span className="font-weight-bold ml-1">Accept request</span>
-                  </Col>
-                </Badge>
-              </div>
+              <UncontrolledDropdown>
+                <DropdownToggle>
+                  <div className="d-flex justify-content-end mb-2">
+                    <Badge color="success" className=" mr-1 mb-1">
+                      {videoRequest && videoRequest.length > 0 && (
+                        <Badge
+                          pill
+                          color="danger"
+                          className="p-1 badge-up float-right"
+                          style={{
+                            marginRight: -8,
+                            marginTop: -6,
+                            fontSize: "12px",
+                          }}
+                        >
+                          {videoRequest.length}
+                        </Badge>
+                      )}
+                      <Col className="p-2">
+                        <Video size={16} />
+                        <span className="font-weight-bold ml-1">
+                          Accept request
+                        </span>
+                      </Col>
+                    </Badge>
+                  </div>
+                </DropdownToggle>
+                <DropdownMenu>
+                  <VideoRequestList videoRequests = {videoRequest} />
+                </DropdownMenu>
+              </UncontrolledDropdown>
               <p className="font-weight-bold">Make yourself famous</p>
               {currentUser && (
                 <div className="d-flex justify-content-between pl-2 pr-2">
