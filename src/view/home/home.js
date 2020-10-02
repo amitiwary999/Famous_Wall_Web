@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios';
 import UploadMedia from './UploadMedia'
 import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE } from '../../common/util'
-import { fetchFamousPosts, fetchVideoRequest } from '../../redux/action/homeAction'
+import { fetchFamousPosts, fetchVideoRequest, postVideoCallRequest } from '../../redux/action/homeAction'
 import { AuthContext } from '../../firebase/Auth'
 import Login from '../login/Login'
 import Spinner from '../../firebase/LoadingSpinner';
@@ -53,6 +53,27 @@ const Home = () => {
     
   }
 
+  const acceptRejectRequest = (userId, status) => {
+    let data = {
+      inviteeId: userId,
+      status: status, //0 means request
+    };
+    currentUser
+      .getIdToken()
+      .then((token) => {
+        postVideoCallRequest(token, data)
+          .then((res) => {
+            console.log("video call req " + res);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   useEffect(() => {
     console.log('lis '+loadItemStatus)
     if(loadItemStatus == PENDING){
@@ -90,7 +111,10 @@ const Home = () => {
           <Card>
             <CardBody>
               <UncontrolledDropdown>
-                <DropdownToggle>
+                <DropdownToggle
+                  tag="small"
+                  className="text-bold-500 cursor-pointer"
+                >
                   <div className="d-flex justify-content-end mb-2">
                     <Badge color="success" className=" mr-1 mb-1">
                       {videoRequest && videoRequest.length > 0 && (
@@ -110,14 +134,14 @@ const Home = () => {
                       <Col className="p-2">
                         <Video size={16} />
                         <span className="font-weight-bold ml-1">
-                          Accept request
+                          Call request
                         </span>
                       </Col>
                     </Badge>
                   </div>
                 </DropdownToggle>
                 <DropdownMenu>
-                  <VideoRequestList videoRequests = {videoRequest} />
+                  <VideoRequestList updateRequest={acceptRejectRequest} videoRequests={videoRequest} />
                 </DropdownMenu>
               </UncontrolledDropdown>
               <p className="font-weight-bold">Make yourself famous</p>

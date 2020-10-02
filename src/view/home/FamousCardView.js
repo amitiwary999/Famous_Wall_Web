@@ -49,7 +49,8 @@ const FamousCardView = (props) => {
 
   const requestVideoCall = () => {
     let data = {
-      inviteeId: creatorId
+      inviteeId: creatorId,
+      status: 0 //0 means request
     }
     currentUser.getIdToken().then(token => {
       postVideoCallRequest(token, data).then(res => {

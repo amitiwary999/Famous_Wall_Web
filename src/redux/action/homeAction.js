@@ -75,7 +75,7 @@ export const fetchVideoRequest = token => {
     })
 }
 
-//data = {inviteeId: to whom wamt to send invite}
+//data = {inviteeId: to whom wamt to send invite, status: 0-> request, 1->accept, 2->reject}
 export const postVideoCallRequest = (token, data) => {
     return new Promise((resolve, reject) => {
         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
