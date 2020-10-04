@@ -14,6 +14,10 @@ const VideoCallView = props => {
 
         return () => jitsi?.dispose?.();
       }, []);
+
+      const evenListen = () => {
+
+      }
       
       const loadJitsiScript = () => {
         let resolveLoadJitsiScriptPromise = null;
@@ -42,9 +46,16 @@ const VideoCallView = props => {
         });
 
         setJitsi(_jitsi);
+                _jitsi.addEventListener("participantRoleChanged", function(
+                  event
+                ) {
+                  console.log(JSON.stringify(event));
+                  if (event.role === "moderator") {
+                  }
+                });
       };
 
-    return <div id={jitsiContainerId} style={{ height: 720, width: "100%" }} />;
+    return <div id={jitsiContainerId} style={{ height: "100vh", width: "100%" }} />;
 }
 
 export default VideoCallView;

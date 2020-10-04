@@ -1,6 +1,6 @@
 import React from 'react';
 import { Video } from 'react-feather';
-import { Col, Media, Row } from 'reactstrap';
+import { Button, Col, Container, Media, Row } from 'reactstrap';
 
 const VideoRequestList = props => {
     let videoRequests = props.videoRequests;
@@ -10,22 +10,49 @@ const VideoRequestList = props => {
             let profileImg = item.userDp;
             let name = item.userName;
             return (
-              <Media className="p-2" key={index}>
-                <Media left>
-                  <Media object src={profileImg} />
-                </Media>
-                <Media className="ml-2" body>
-                  <Media heading>{name}</Media>
-                  <Row>
-                    <Col onClick={() => props.updateRequest(item.userId, 2)}>
-                      <p>Reject</p>
-                    </Col>
-                    <Col onClick={() => props.updateRequest(item.userId, 1)}>
-                      <p>Accept</p>
-                    </Col>
-                  </Row>
-                </Media>
-              </Media>
+              <Container>
+                <div className="row" key={index}>
+                  <div className="col">
+                    <img
+                      src={profileImg}
+                      className="uploadDp"
+                      alt={name}
+                      style={{
+                        height: "5.5em",
+                        width: "5.5em",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </div>
+                  <div className="col">
+                    <div className="row">
+                      <div className="col">
+                        <p className="text-center font-weight-bold">{name}</p>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <p
+                            className="pt-1"
+                            style={{ color: "#ff0000", cursor: "pointer" }}
+                            onClick={() => props.updateRequest(item.id, 2)}
+                          >
+                            Reject
+                          </p>
+                        </div>
+                        <div className="col">
+                          <Button
+                            color="primary"
+                            onClick={() => props.updateRequest(item.id, 1)}
+                          >
+                            Accept
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Container>
             );
         })
     )
