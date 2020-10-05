@@ -13,6 +13,7 @@ import { AuthContext } from '../../firebase/Auth'
 import Login from '../login/Login'
 import Spinner from '../../firebase/LoadingSpinner';
 import VideoRequestList from './VideoRequestList'
+import SetVideoCallTime from './SetVideoCallTime'
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -29,6 +30,8 @@ const Home = () => {
   const [showLogin, setShowLogin] = useState(false)
   const [showLoader, setShowLoader] = useState(false);
   const [videoRequest, setVideoRequest] = useState([]);
+  const [requestorId, setRequestorId] = useState('');
+  const [confirmTime, setConfirmTime] = useState(false);
   let dispatch = useDispatch()
 
   useEffect(() => {
@@ -54,24 +57,34 @@ const Home = () => {
   }
 
   const acceptRejectRequest = (userId, status) => {
-    let data = {
-      inviteeId: userId,
-      status: status, //0 means request
-    };
-    currentUser
-      .getIdToken()
-      .then((token) => {
-        postVideoCallRequest(token, data)
-          .then((res) => {
-            console.log("video call req " + res);
+    if(status == 1){
+      setRequestorId(userId)
+      setConfirmTime(true);
+    }else{
+      acceptRejectApiCall(userId, status)
+    }
+  }
+
+  const acceptRejectApiCall = (userId, status) => {
+    setConfirmTime(false);
+        let data = {
+          inviteeId: userId,
+          status: status, //0 means request
+        };
+        currentUser
+          .getIdToken()
+          .then((token) => {
+            postVideoCallRequest(token, data)
+              .then((res) => {
+                console.log("video call req " + res);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           })
           .catch((error) => {
             console.log(error);
           });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 
   useEffect(() => {
@@ -103,6 +116,10 @@ const Home = () => {
 
     const hideLogin = () => {
       setShowLogin(false);
+    }
+
+    const confirmVideoCallTime = () => {
+      SetVideoCallTime(false);
     }
 
     return (
@@ -248,6 +265,7 @@ const Home = () => {
         )}
         {showLogin && <Login closeLogin={() => hideLogin()} />}
         {showLoader && <Spinner />}
+        {confirmTime && (<SetVideoCallTime confirmTime={acceptRejectApiCall} close={() => setConfirmTime(false)} requestorId={requestorId} />)}
       </div>
     );
 }
