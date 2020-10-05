@@ -65,12 +65,13 @@ const Home = () => {
     }
   }
 
-  const acceptRejectApiCall = (userId, status) => {
+  const acceptRejectApiCall = (userId, status, callTime) => {
     setConfirmTime(false);
         let data = {
           inviteeId: userId,
           status: status, //0 means request
         };
+        if(status == 1) data['callTime'] = callTime;
         currentUser
           .getIdToken()
           .then((token) => {

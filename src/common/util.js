@@ -1,4 +1,5 @@
 import firebase from '../firebase/Firebase';
+import { store } from "react-notifications-component";
 
 export const IMAGE_MEDIA = 'image'
 export const VIDEO_MEDIA = 'video'
@@ -36,4 +37,19 @@ export const authToken = () => {
             }
         });
     });
+};
+
+export const notify = (msg, type, title = "") => {
+  store.addNotification({
+    title: title ? title : type == "success" ? "Awesome" : "Error",
+    message: msg,
+    type: type,
+    insert: "bottom",
+    container: "bottom-right",
+    animationIn: ["animated", "fadeIn"],
+    animationOut: ["animated", "fadeOut"],
+    dismiss: {
+      duration: 5000,
+    },
+  });
 };

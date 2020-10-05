@@ -1,14 +1,41 @@
 import React, { useState } from 'react';
 import { Button, Col, Label, Modal, ModalBody, ModalFooter, Row } from 'reactstrap';
 import Flatpickr from "react-flatpickr";
-
+import moment from 'moment'
+import { notify } from '../../common/util';
 
 const SetVideoCallTime = props => {
     const [callDate, setCallDate] = useState(null);
     const [callTime, setCallTime] = useState(null);
     let requestorId = props.requestorId;
     const confirmTime = () => {
-        props.confirmTime(requestorId, 1);
+        //selected date and time should be greater than current.
+        let selectedDate = moment(
+            callDate
+        ).format("YYYY-MM-DD");
+        let selectTime = moment(
+            new Date(callTime)
+        ).format("HH:mm:ss");
+
+        let selectedDateTime = moment(selectedDate+' '+setCallTime, "YYYY-MM-DD HH:mm:ss").utc().toISOString();
+
+        if(!callDate || !callTime){
+
+        } else if (
+            moment(
+                selectedDate + " " + selectTime,
+                "YYYY-MM-DD HH:mm:ss"
+            ).isBefore(moment().valueOf())
+        ) {
+            notify(
+                "You can't set video call time in past date",
+                "danger",
+                "Error!"
+            );
+            return false;
+        }else{
+            props.confirmTime(requestorId, 1, selectedDateTime);
+        }
     }
 
     const close = () => {
