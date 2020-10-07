@@ -17,25 +17,17 @@ const SetVideoCallTime = props => {
             new Date(callTime)
         ).format("HH:mm:ss");
 
-        let selectedDateTime = moment(selectedDate+' '+setCallTime, "YYYY-MM-DD HH:mm:ss").utc().toISOString();
-
+        let selectedDateTime = moment(selectedDate + " " + selectTime).utc();
         if(!callDate || !callTime){
 
-        } else if (
-            moment(
-                selectedDate + " " + selectTime,
-                "YYYY-MM-DD HH:mm:ss"
-            ).isBefore(moment().valueOf())
-        ) {
-            notify(
-                "You can't set video call time in past date",
-                "danger",
-                "Error!"
-            );
-            return false;
-        }else{
-            props.confirmTime(requestorId, 1, selectedDateTime);
-        }
+        } else if (moment(selectedDate + " " + selectTime)
+            .utc().isBefore(moment().utc().valueOf())
+          ) {
+              notify("You can't set video call time in past date","danger","Error!");
+              return false;
+            } else {
+              props.confirmTime(requestorId, 1, selectedDateTime);
+            }
     }
 
     const close = () => {
