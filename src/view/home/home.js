@@ -66,6 +66,7 @@ const Home = () => {
   }
 
   const acceptRejectApiCall = (userId, status, callTime) => {
+    console.log(userId+' '+status+' '+callTime)
     setConfirmTime(false);
         let data = {
           inviteeId: userId,

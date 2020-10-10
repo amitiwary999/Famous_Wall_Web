@@ -30,12 +30,12 @@ const VideoRequestList = props => {
                       <div className="col">
                         <p className="text-center font-weight-bold">{name}</p>
                       </div>
-                      <div className="row">
+                      {item.status == 0 && (<div className="row">
                         <div className="col">
                           <p
                             className="pt-1"
                             style={{ color: "#ff0000", cursor: "pointer" }}
-                            onClick={() => props.updateRequest(item.id, 2)}
+                            onClick={() => props.updateRequest(item.userId, 2)}
                           >
                             Reject
                           </p>
@@ -43,12 +43,12 @@ const VideoRequestList = props => {
                         <div className="col">
                           <Button
                             color="primary"
-                            onClick={() => props.updateRequest(item.id, 1)}
+                            onClick={() => props.updateRequest(item.userId, 1)}
                           >
                             Accept
                           </Button>
                         </div>
-                      </div>
+                      </div>)}
                     </div>
                   </div>
                 </div>
