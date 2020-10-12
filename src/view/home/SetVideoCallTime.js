@@ -17,7 +17,6 @@ const SetVideoCallTime = props => {
             new Date(callTime)
         ).format("HH:mm:ss");
 
-        let selectedDateTime = moment(selectedDate + " " + selectTime).utc();
         if(!callDate || !callTime){
 
         } else if (moment(selectedDate + " " + selectTime)
@@ -26,7 +25,8 @@ const SetVideoCallTime = props => {
               notify("You can't set video call time in past date","danger","Error!");
               return false;
             } else {
-              props.confirmTime(requestorId, 1, selectedDateTime);
+               let dateTime = moment(selectedDate + " " + selectTime).utc().format("YYYY-MM-DD HH:mm:ss");
+              props.confirmTime(requestorId, 1, dateTime);
             }
     }
 

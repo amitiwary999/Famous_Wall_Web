@@ -5,7 +5,7 @@ import { Video, Image, Music } from 'react-feather'
 import Dropzone from 'react-dropzone'
 import FamousCardView from './FamousCardView'
 import { useSelector, useDispatch } from 'react-redux'
-import axios from 'axios';
+import moment from 'moment'
 import UploadMedia from './UploadMedia'
 import { VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE } from '../../common/util'
 import { fetchFamousPosts, fetchVideoRequest, postVideoCallRequest } from '../../redux/action/homeAction'
@@ -61,7 +61,8 @@ const Home = () => {
       setRequestorId(userId)
       setConfirmTime(true);
     }else{
-      acceptRejectApiCall(userId, status)
+      let cTime = moment().utc().format("YYYY-MM-DD HH:mm:ss")
+      acceptRejectApiCall(userId, status, cTime)
     }
   }
 

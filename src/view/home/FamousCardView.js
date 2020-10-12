@@ -48,10 +48,13 @@ const FamousCardView = (props) => {
 
 
   const requestVideoCall = () => {
+    let cTime = moment().utc().format("YYYY-MM-DD HH:mm:ss")
     let data = {
       inviteeId: creatorId,
+      callTime: cTime,
       status: 0 //0 means request
     }
+    console.log(JSON.stringify(data))
     currentUser.getIdToken().then(token => {
       postVideoCallRequest(token, data).then(res => {
         console.log('video call req '+res)
