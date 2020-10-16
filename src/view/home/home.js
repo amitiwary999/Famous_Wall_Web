@@ -45,7 +45,7 @@ const Home = () => {
     }else{
       dispatch(fetchFamousPosts(lastItemId));
     }
-  }, [])
+  }, [currentUser, dispatch, lastItemId])
 
   const getVideoRequest = token => {
     fetchVideoRequest(token).then(res => {
@@ -106,7 +106,7 @@ const Home = () => {
 
     const loadFamousCard = (item, index) => {
       console.log("item " + item['mimeType'])
-       return < FamousCardView data = { item } pos={index} />
+       return < FamousCardView key={index} data = { item } pos={index} />
     }
 
     const dropzoneClick = (event) => {

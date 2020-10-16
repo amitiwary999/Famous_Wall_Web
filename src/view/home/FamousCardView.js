@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import imgPic from '../../img/IMG_20190907_224201.jpg'
-import { Col, Card, CardBody, Badge, Row } from 'reactstrap';
+import { Col, Card, CardBody, Badge, Row, Carousel, CarouselItem } from 'reactstrap';
 import { IMAGE_MEDIA, VIDEO_MEDIA, MUSIC_MEDIA } from '../../common/util';
 import { Heart, Video } from 'react-feather';
 import moment from 'moment';
@@ -12,14 +12,13 @@ const FamousCardView = (props) => {
   const { currentUser } = useContext(AuthContext);
 
   let data = props.data;
-  let mimeType = data.mimeType;
-  let mediaUrl = data.mediaUrl;
-  let desc = data.description;
+  let mimeType = data.mimeType.split(',');
+  let mediaUrl = data.mediaUrl.split(',');
+  let desc = data.description.split(',');
   let userDp = data.userDp;
   let userName = data.userName;
-  let date = data.date;
-  let heartIconColor = data.isLiked?'red': 'white'
-  let heartIconBorderColor = data.isLiked?'red':'black'
+  let date = data.date.split(',');
+  let isLiked = data.isLiked.split(',')
   let mediaTYpe = IMAGE_MEDIA
   if(mimeType.includes(IMAGE_MEDIA)){
     mediaTYpe = IMAGE_MEDIA
@@ -29,14 +28,30 @@ const FamousCardView = (props) => {
     mediaTYpe = MUSIC_MEDIA
   }
   let creatorId = data.creatorId;
-  let postId = data.postId;
+  let postId = data.postId.split(',');
   let pos = props.pos;
-  let incr = (data.isLiked == 0)?1:0
   let dispatch  = useDispatch();
 
-  const updateLikePost = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const next = () => {
+    const nextIndex = activeIndex === desc.length - 1 ? 0 : activeIndex + 1;
+    setActiveIndex(nextIndex);
+  }
+
+  const previous = () => {
+    const nextIndex = activeIndex === 0 ? desc.length - 1 : activeIndex - 1;
+    setActiveIndex(nextIndex);
+  }
+
+  const goToIndex = (newIndex) => {
+    setActiveIndex(newIndex);
+  }
+
+  const updateLikePost = index => {
     if(currentUser){
     currentUser.getIdToken().then(token => {
+      let incr = isLiked[index] == 0?1:0
       dispatch(likeOrUnlikePost(postId, incr, pos, token))
     }).catch(error => {
       console.log(error)
@@ -72,7 +87,10 @@ const FamousCardView = (props) => {
         <Col md={6} className="mx-auto">
           <Card>
             <CardBody>
-              <Col style={{ height: "auto", maxWidth: "460px" }}>
+              <Carousel next={next} previous={previous} activeIndex={activeIndex}>
+                {desc.map((desc, index) =>(
+                  <CarouselItem key={index}>
+                    <Col style={{ height: "auto", maxWidth: "460px" }}>
                 <div className="row ml-3 mt-2">
                   <img
                     src={userDp}
@@ -82,23 +100,23 @@ const FamousCardView = (props) => {
                   <div className="float-left ">
                     <p className="my-auto font-weight-bold">{userName}</p>
                     <p className="float-left" style={{ fontSize: "12px" }}>
-                      {moment(date, "x").fromNow()}
+                      {moment(date[index], "x").fromNow()}
                       {/**in response all is string so using x to format it */}
                     </p>
                   </div>
                 </div>
                 <div className="my-2">
-                  {mediaTYpe == IMAGE_MEDIA && (
+                  {mimeType[index].includes(IMAGE_MEDIA) && (
                     <img
-                      src={mediaUrl}
+                      src={mediaUrl[index]}
                       className="rounded-sm mx-2"
                       style={{ height: "auto", maxWidth: "460px" }}
                     />
                   )}
 
-                  {mediaTYpe == VIDEO_MEDIA && (
+                  {mimeType[index].includes(VIDEO_MEDIA) && (
                     <video
-                      src={mediaUrl}
+                      src={mediaUrl[index]}
                       style={{ maxWidth: "460px", height: "auto" }}
                       controls={true}
                       autoPlay={false}
@@ -108,26 +126,30 @@ const FamousCardView = (props) => {
                   )}
                 </div>
                 {desc && (
-                  <div className="mt-2 mx-2">
+                  <div className="row mt-2 mx-2">
                     <p className="float-left font-weight-bold">{desc}</p>
                   </div>
                 )}
                 <Row>
                   <div
                     className="justify-content-left p-2 my-auto"
-                    onClick={updateLikePost}
+                    onClick={() => updateLikePost(index)}
                   >
                     <Heart
                       style={{
-                        fill: heartIconColor,
-                        color: heartIconBorderColor,
+                        fill: isLiked[index]?'red': 'white',
+                        color: isLiked[index]?'red': 'white',
                       }}
                     />
                   </div>
-                  <div
-                    className="justify-content-right p-2"
-                    onClick={requestVideoCall}
-                  >
+                </Row>
+              </Col>
+                  </CarouselItem>
+                ))}
+              </Carousel>
+              <div
+                className="justify-content-right p-2"
+                onClick={requestVideoCall}>
                     <Badge color="info" className=" mr-1 mb-1">
                       <Col className="p-2">
                         <Video size={16} />
@@ -137,8 +159,6 @@ const FamousCardView = (props) => {
                       </Col>
                     </Badge>
                   </div>
-                </Row>
-              </Col>
             </CardBody>
           </Card>
         </Col>
