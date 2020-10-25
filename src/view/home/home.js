@@ -151,7 +151,7 @@ const Home = () => {
                           {videoRequest.length}
                         </Badge>
                       )}
-                      <Col className="p-2">
+                      <Col className="p-2" style={{cursor: 'pointer'}}>
                         <Video size={16} />
                         <span className="font-weight-bold ml-1">
                           Call request

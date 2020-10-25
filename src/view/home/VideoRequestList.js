@@ -1,5 +1,6 @@
 import React from 'react';
 import { Video } from 'react-feather';
+import moment from 'moment';
 import { Button, Col, Container, Media, Row } from 'reactstrap';
 
 const VideoRequestList = props => {
@@ -9,6 +10,7 @@ const VideoRequestList = props => {
         videoRequests.map((item, index) => {
             let profileImg = item.userDp;
             let name = item.userName;
+            console.log("items "+JSON.stringify(item))
             return (
               <Container>
                 <div className="row" key={index}>
@@ -49,6 +51,15 @@ const VideoRequestList = props => {
                           </Button>
                         </div>
                       </div>)}
+                      {item.status == 1 && (
+                        <div className="row">
+                          <div className="col">
+                            <p>
+                              {moment(item.updatedAt).fromNow()}
+                            </p>
+                          </div>  
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
