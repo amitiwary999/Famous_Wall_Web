@@ -45,7 +45,7 @@ const Home = () => {
     }else{
       dispatch(fetchFamousPosts(lastItemId));
     }
-  }, [currentUser, dispatch, lastItemId])
+  },[])
 
   const getVideoRequest = token => {
     fetchVideoRequest(token).then(res => {

@@ -29,7 +29,7 @@ const FamousCardView = (props) => {
   let userDp = data.userDp;
   let userName = data.userName;
   let date = data.date.split(",");
-  let isLiked = data.isLiked.split(",");
+  let isLiked = data.isLiked;
   let mediaTYpe = IMAGE_MEDIA;
   if (mimeType.includes(IMAGE_MEDIA)) {
     mediaTYpe = IMAGE_MEDIA;
@@ -59,13 +59,13 @@ const FamousCardView = (props) => {
     setActiveIndex(newIndex);
   };
 
-  const updateLikePost = (index) => {
+  const updateLikePost = () => {
     if (currentUser) {
       currentUser
         .getIdToken()
         .then((token) => {
-          let incr = isLiked[index] == 0 ? 1 : 0;
-          dispatch(likeOrUnlikePost(postId, incr, pos, token));
+          let incr = isLiked == 0 ? 1 : 0;
+          dispatch(likeOrUnlikePost(creatorId, incr, pos, token));
         })
         .catch((error) => {
           console.log(error);
@@ -152,27 +152,26 @@ const FamousCardView = (props) => {
                         <p className="float-left font-weight-bold">{desc}</p>
                       </div>
                     )}
-                    <Row>
-                      <div
-                        className="justify-content-left p-2 my-auto"
-                        onClick={() => updateLikePost(index)}
-                      >
-                        <Heart
-                          style={{
-                            fill: isLiked[index] ? "red" : "white",
-                            color: isLiked[index] ? "red" : "white",
-                          }}
-                        />
-                      </div>
-                    </Row>
                   </Col>
                 </CarouselItem>
               ))}
             </Carousel>
-            <div
-              className="justify-content-right p-2"
-              onClick={requestVideoCall}
-            >
+              <Row className="mx-2">
+                <div
+                  className="justify-content-left p-2 my-auto"
+                  onClick={updateLikePost}
+                >
+                  <Heart
+                    style={{
+                      fill: isLiked === 1?"red" : "white",
+                      color: isLiked === 1? "red": "black",
+                    }}
+                  />
+                </div>
+                <div
+                 className="justify-content-right p-2"
+                 onClick={requestVideoCall}
+                >
               <Badge color="info" className=" mr-1 mb-1" style={{cursor: 'pointer'}}>
                 <Col className="p-2">
                   <Video size={16} />
@@ -180,6 +179,7 @@ const FamousCardView = (props) => {
                 </Col>
               </Badge>
             </div>
+              </Row>
           </CardBody>
         </Card>
       </Col>
