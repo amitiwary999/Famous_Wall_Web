@@ -102,9 +102,9 @@ const FamousCardView = (props) => {
   };
 
   return (
-    <div className="container my-2">
+    <div className="my-2">
       {/* {console.log("data in card " + JSON.stringify(props))} */}
-      <Col md={6} className="mx-auto">
+      <Col>
         <Card>
           <CardBody>
             <Carousel next={next} previous={previous} activeIndex={activeIndex}>
@@ -159,6 +159,7 @@ const FamousCardView = (props) => {
               <Row className="mx-2">
                 <div
                   className="justify-content-left p-2 my-auto"
+                  style={{cursor: 'pointer'}}
                   onClick={updateLikePost}
                 >
                   <Heart

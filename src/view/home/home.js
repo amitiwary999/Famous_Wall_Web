@@ -14,6 +14,7 @@ import Login from '../login/Login'
 import Spinner from '../../firebase/LoadingSpinner';
 import VideoRequestList from './VideoRequestList'
 import SetVideoCallTime from './SetVideoCallTime'
+import VideoRequestLists from './VideoRequestLists'
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -250,15 +251,23 @@ const Home = () => {
             </CardBody>
           </Card>
         </Col>
-        {/* <InfiniteScroll
+        <Row>
+        <Col md={8}>
+          <div className="mx-auto">
+          {/* <InfiniteScroll
           pageStart={0}
           loadMore={loadMoreItems}
           hasMore={hasMoreItems}
-          loader={<Spinner />}
-        > */}
-        {famousPosts &&
-          famousPosts.map((item, index) => loadFamousCard(item, index))}
-        {/* </InfiniteScroll> */}
+          loader={<Spinner />}> */}
+          {famousPosts &&
+            famousPosts.map((item, index) => loadFamousCard(item, index))}
+          {/* </InfiniteScroll> */}
+          </div>
+        </Col>
+        <Col md={4} className="float-right">
+          <VideoRequestLists updateRequest={acceptRejectRequest} videoRequests={videoRequest} />
+        </Col>          
+        </Row>
         {showSelectedMediaCard && (
           <UploadMedia
             mediaType={selectedMediaType}
