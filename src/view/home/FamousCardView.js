@@ -106,7 +106,7 @@ const FamousCardView = (props) => {
       {/* {console.log("data in card " + JSON.stringify(props))} */}
       <Col>
         <Card>
-          <CardBody>
+          <CardBody className="mx-sm-auto">
             <Carousel next={next} previous={previous} activeIndex={activeIndex}>
               {desc.map((desc, index) => (
                 <CarouselItem key={index}>

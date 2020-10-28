@@ -14,7 +14,7 @@ import Login from '../login/Login'
 import Spinner from '../../firebase/LoadingSpinner';
 import VideoRequestList from './VideoRequestList'
 import SetVideoCallTime from './SetVideoCallTime'
-import VideoRequestLists from './VideoRequestLists'
+import VideoRequestLists from './VideoRequestList/VideoRequestLists'
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);

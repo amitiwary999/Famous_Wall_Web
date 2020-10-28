@@ -1,0 +1,49 @@
+.requestorImg{
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.requestorName{
+    font-size: 12px;
+}
+
+@media (max-width: 576px){
+    .requestorImg{
+        height: 36px;
+        width: 36px;
+    }
+
+    .requestorName{
+        font-size: 12px;
+    }
+}
+
+@media (max-widh: 768px){
+    .requestorImg{
+        height: 42px;
+        width: 42px;
+    }
+    .requestorName{
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 992px){
+    .requestorImg{
+        height: 66px;
+        width: 66px;
+    }
+    .requestorName{
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 992px){
+    .requestorImg{
+        height: 72px;
+        width: 72px;
+    }
+    .requestorName{
+        font-size: 14px;
+    }
+}

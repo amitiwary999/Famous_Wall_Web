@@ -1,6 +1,8 @@
 import React from 'react'
 import { Button, Card, CardBody, Col, Container } from 'reactstrap'
 import moment from 'moment';
+import './VideoRequestList.css'
+import { Delete } from 'react-feather';
 
 const VideoRequestLists = props => {
     let videoRequests = props.videoRequests;
@@ -9,36 +11,22 @@ const VideoRequestLists = props => {
         let name = item.userName;
         return(
             <Card key={index}>
-                <CardBody>
-                <div className="row" key={index}>
-                  <div className="col">
+             
+                <CardBody className="p-0" style={{marginTop: '5px', marginBottom: '5px'}}>
+                   <Delete className="float-right mr-1" onClick={() => props.updateRequest(item.userId, 2)}/>
+                <div className="col" key={index}>
+                  <div className="row">
                     <img
                       src={profileImg}
-                      className="uploadDp"
+                      className="requestorImg"
                       alt={name}
-                      style={{
-                        height: "5.5em",
-                        width: "5.5em",
-                        objectFit: "cover",
-                        borderRadius: "50%",
-                      }}
                     />
-                  </div>
-                  <div className="col">
-                    <div className="row">
+                  <div className="row">
+                    <div className="col">
                       <div className="col">
-                        <p className="text-center font-weight-bold">{name}</p>
+                        <p className="text-center font-weight-bold requestorName">{name}</p>
                       </div>
                       {item.status == 0 && (<div className="row">
-                        <div className="col">
-                          <p
-                            className="pt-1"
-                            style={{ color: "#ff0000", cursor: "pointer" }}
-                            onClick={() => props.updateRequest(item.userId, 2)}
-                          >
-                            Reject
-                          </p>
-                        </div>
                         <div className="col">
                           <Button
                             color="primary"
@@ -58,6 +46,7 @@ const VideoRequestLists = props => {
                         </div>
                       )}
                     </div>
+                  </div>
                   </div>
                 </div>
                 </CardBody>
