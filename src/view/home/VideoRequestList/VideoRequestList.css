@@ -7,6 +7,11 @@
     font-size: 12px;
 }
 
+.acceptButton{
+    width:60px;
+    height: 24px;
+}
+
 @media (max-width: 576px){
     .requestorImg{
         height: 36px;
@@ -14,6 +19,17 @@
     }
 
     .requestorName{
+        font-size: 12px;
+    }
+
+    .acceptButton{
+       width:60px;
+       height: 24px;
+    }
+
+    .acceptButton{
+        width: 60px;
+        height: 20px;
         font-size: 12px;
     }
 }
@@ -26,24 +42,42 @@
     .requestorName{
         font-size: 12px;
     }
+
+    .acceptButton{
+        width: 72px;
+        height: 24px;
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 992px){
     .requestorImg{
-        height: 66px;
-        width: 66px;
+        height: 48px;
+        width: 48px;
     }
     .requestorName{
         font-size: 14px;
+    }
+
+    .acceptButton{
+        width: 96px;
+        height: 32px;
+        font-size: 12px;
     }
 }
 
 @media (min-width: 992px){
     .requestorImg{
-        height: 72px;
-        width: 72px;
+        height: 60px;
+        width: 60px;
     }
     .requestorName{
         font-size: 14px;
+    }
+
+    .acceptButton{
+        width: 96px;
+        height: 32px;
+        font-size: 12px;
     }
 }

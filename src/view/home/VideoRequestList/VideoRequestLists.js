@@ -29,6 +29,7 @@ const VideoRequestLists = props => {
                       {item.status == 0 && (<div className="row">
                         <div className="col">
                           <Button
+                          className="acceptButton"
                             color="primary"
                             onClick={() => props.updateRequest(item.userId, 1)}
                           >
