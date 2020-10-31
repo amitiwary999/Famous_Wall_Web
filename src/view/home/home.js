@@ -131,7 +131,7 @@ const Home = () => {
         <Col md={4} sm={6} className="mx-auto mt-2">
           <Card>
             <CardBody>
-              <UncontrolledDropdown>
+              <UncontrolledDropdown className="d-md-none">
                 <DropdownToggle
                   tag="small"
                   className="text-bold-500 cursor-pointer"
@@ -252,7 +252,7 @@ const Home = () => {
           </Card>
         </Col>
         <Row>
-        <Col md={8}>
+        <Col md={7} lg={8} xl={9}>
           <div className="mx-auto">
           {/* <InfiniteScroll
           pageStart={0}
@@ -264,7 +264,7 @@ const Home = () => {
           {/* </InfiniteScroll> */}
           </div>
         </Col>
-        <Col md={4} className="float-right">
+        <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
           <VideoRequestLists updateRequest={acceptRejectRequest} videoRequests={videoRequest} />
         </Col>          
         </Row>

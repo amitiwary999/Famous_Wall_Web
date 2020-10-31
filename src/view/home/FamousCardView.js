@@ -132,14 +132,14 @@ const FamousCardView = (props) => {
                           src={mediaUrl[index]}
                           alt={userName}
                           className="rounded-sm mx-2"
-                          style={{ height: "auto", maxWidth: "460px" }}
+                          style={{ height: "auto", width: "100%" }}
                         />
                       )}
 
                       {mimeType[index].includes(VIDEO_MEDIA) && (
                         <video
                           src={mediaUrl[index]}
-                          style={{ maxWidth: "460px", height: "auto" }}
+                          style={{ width: "100%", height: "auto" }}
                           controls={true}
                           autoPlay={false}
                           className="rounded-sm mx-2 rounded-lg"
