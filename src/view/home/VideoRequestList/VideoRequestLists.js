@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import {
-  Button, Card, CardBody, Col,
+  Button, Card, CardBody, CardHeader, Col,
 } from 'reactstrap';
 import moment from 'moment';
 import './VideoRequestList.css';
@@ -15,7 +15,6 @@ const VideoRequestLists = (props) => {
     const name = item.userName;
     return (
       <Card key={index}>
-
         <CardBody className="p-0" style={{ marginTop: '5px', marginBottom: '5px' }}>
           <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => props.updateRequest(item.userId, 2, index)} />
           <div className="col" key={index}>
@@ -63,6 +62,7 @@ const VideoRequestLists = (props) => {
   return (
     <Col>
       <Card>
+        <p className="m-1" style={{fontWeight: 'bold'}}>Video Call Request</p>
         <CardBody>
           {videoRequests.map((item, index) => videolist(item, index))}
         </CardBody>

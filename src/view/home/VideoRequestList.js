@@ -1,9 +1,13 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable no-console */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import { Video } from 'react-feather';
 import moment from 'moment';
 import {
-  Button, Col, Container, Media, Row,
+  Button, Container,
 } from 'reactstrap';
 
 const VideoRequestList = (props) => {
@@ -35,7 +39,7 @@ const VideoRequestList = (props) => {
                 <div className="col">
                   <p className="text-center font-weight-bold">{name}</p>
                 </div>
-                {item.status == 0 && (
+                {item.status === 0 && (
                 <div className="row">
                   <div className="col">
                     <p
@@ -56,7 +60,7 @@ const VideoRequestList = (props) => {
                   </div>
                 </div>
                 )}
-                {item.status == 1 && (
+                {item.status === 1 && (
                 <div className="row">
                   <div className="col">
                     <p>

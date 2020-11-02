@@ -81,7 +81,7 @@ const Home = () => {
   const acceptRejectApiCall = (userId, status, callTime, index) => {
     updateVideoRequest(status, index);
     setConfirmTime(false);
-    setShowLoader(true)
+    setShowLoader(true);
     const data = {
       inviteeId: userId,
       status, // 0 means request
@@ -93,18 +93,18 @@ const Home = () => {
         postVideoCallRequest(token, data)
           .then((res) => {
             console.log(`video call req ${res}`);
-            setShowLoader(false)
+            setShowLoader(false);
           })
           .catch((error) => {
             updateVideoRequest(0, index);
             console.log(error);
-            setShowLoader(false)
+            setShowLoader(false);
           });
       })
       .catch((error) => {
         updateVideoRequest(0, index);
         console.log(error);
-        setShowLoader(false)
+        setShowLoader(false);
       });
   };
 
@@ -121,11 +121,11 @@ const Home = () => {
 
   useEffect(() => {
     console.log(`lis ${loadItemStatus}`);
-    if (loadItemStatus == PENDING) {
+    if (loadItemStatus === PENDING) {
       setShowLoader(true);
-    } else if (loadItemStatus == SUCCESS) {
+    } else if (loadItemStatus === SUCCESS) {
       setShowLoader(false);
-    } else if (loadItemStatus == FAILURE) {
+    } else if (loadItemStatus === FAILURE) {
       setShowLoader(false);
     }
   }, [loadItemStatus]);
@@ -135,7 +135,14 @@ const Home = () => {
 
   const loadFamousCard = (item, index) => {
     console.log(`item ${item.mimeType}`);
-    return <FamousCardView key={index} data={item} pos={index} />;
+    return (
+      <FamousCardView
+        key={index}
+        data={item}
+        pos={index}
+        showLogin={() => setShowLogin(true)}
+      />
+    );
   };
 
   const dropzoneClick = (event) => {
@@ -155,6 +162,7 @@ const Home = () => {
       <Col md={4} sm={6} className="mx-auto mt-2">
         <Card>
           <CardBody>
+            {videoRequest && videoRequest.length > 0 && (
             <UncontrolledDropdown className="d-md-none">
               <DropdownToggle
                 tag="small"
@@ -189,6 +197,7 @@ const Home = () => {
                 <VideoRequestList updateRequest={acceptRejectRequest} videoRequests={videoRequest} />
               </DropdownMenu>
             </UncontrolledDropdown>
+            )}
             <p className="font-weight-bold">Make yourself famous</p>
             {currentUser && (
             <div className="d-flex justify-content-between pl-2 pr-2">
@@ -289,9 +298,11 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
+        {videoRequest && videoRequest.length > 0 && (
         <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
           <VideoRequestLists updateRequest={acceptRejectRequest} videoRequests={videoRequest} />
         </Col>
+        )}
       </Row>
       {showSelectedMediaCard && (
       <UploadMedia
