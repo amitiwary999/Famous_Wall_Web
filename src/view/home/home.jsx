@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import {
@@ -39,6 +40,7 @@ const Home = () => {
   const [videoRequest, setVideoRequest] = useState([]);
   const [requestorId, setRequestorId] = useState('');
   const [confirmTime, setConfirmTime] = useState(false);
+  const [videoRequestIndex, setVideoRequestIndex] = useState(0);
   const dispatch = useDispatch();
 
   const getVideoRequest = (token) => {
@@ -64,37 +66,56 @@ const Home = () => {
     }
   }, []);
 
-  const acceptRejectApiCall = (userId, status, callTime) => {
-    console.log(`${userId} ${status} ${callTime}`);
+  const updateVideoRequest = (status, index) => {
+    const request = videoRequest[index];
+    request.status = status;
+    // eslint-disable-next-line max-len
+    const updatedVideoRequest = [
+      ...videoRequest.slice(0, index),
+      request,
+      ...videoRequest.slice(index + 1),
+    ];
+    setVideoRequest(updatedVideoRequest);
+  };
+
+  const acceptRejectApiCall = (userId, status, callTime, index) => {
+    updateVideoRequest(status, index);
     setConfirmTime(false);
+    setShowLoader(true)
     const data = {
       inviteeId: userId,
       status, // 0 means request
     };
-    if (status == 1) data.callTime = callTime;
+    if (status === 1) data.callTime = callTime;
     currentUser
       .getIdToken()
       .then((token) => {
         postVideoCallRequest(token, data)
           .then((res) => {
             console.log(`video call req ${res}`);
+            setShowLoader(false)
           })
           .catch((error) => {
+            updateVideoRequest(0, index);
             console.log(error);
+            setShowLoader(false)
           });
       })
       .catch((error) => {
+        updateVideoRequest(0, index);
         console.log(error);
+        setShowLoader(false)
       });
   };
 
-  const acceptRejectRequest = (userId, status) => {
-    if (status == 1) {
+  const acceptRejectRequest = (userId, status, index) => {
+    setVideoRequestIndex(index);
+    if (status === 1) {
       setRequestorId(userId);
       setConfirmTime(true);
     } else {
       const cTime = moment().utc().format('YYYY-MM-DD HH:mm:ss');
-      acceptRejectApiCall(userId, status, cTime);
+      acceptRejectApiCall(userId, status, cTime, index);
     }
   };
 
@@ -281,7 +302,13 @@ const Home = () => {
       )}
       {showLogin && <Login closeLogin={() => hideLogin()} />}
       {showLoader && <Spinner />}
-      {confirmTime && (<SetVideoCallTime confirmTime={acceptRejectApiCall} close={() => setConfirmTime(false)} requestorId={requestorId} />)}
+      {confirmTime && (
+      <SetVideoCallTime
+        confirmTime={acceptRejectApiCall}
+        close={() => setConfirmTime(false)}
+        requestorId={requestorId}
+      />
+      )}
     </div>
   );
 };

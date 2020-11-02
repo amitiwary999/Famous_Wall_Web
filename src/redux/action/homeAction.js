@@ -3,7 +3,7 @@ import firebase from '../../firebase/Firebase'
 
 export const fetchFamousPosts = (lastItemId, token) => dispatch => {
     dispatch({type: 'LOAD_NEW_POSTS_PENDING'})
-    console.log('token '+token)
+    if(token)
     axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
     let data = {
         nextKey: lastItemId,
@@ -16,7 +16,6 @@ export const fetchFamousPosts = (lastItemId, token) => dispatch => {
             let data = res.data;
             if(data.length>0){
                 let lastItemPostId = data[data.length-1].postId
-                console.log('rr '+JSON.stringify(data))
                 dispatch({type: 'LOADED_NEW_POSTS', payload: data})
                 dispatch({type: 'UPDATE_LAST_ITEM', payload: lastItemPostId})
             }else{
@@ -40,9 +39,7 @@ export const likeOrUnlikePost = (famousUserId, incr, pos, token)=> dispatch =>{
         increment: incr
     }
 
-    console.log("data "+JSON.stringify(data)+" "+token)
     axios.post('setPostLikeSql', data).then(res => {
-        console.log('res '+JSON.stringify(res.data))
         if(res && res.data){
 
         }else{

@@ -13,7 +13,7 @@ import { notify } from '../../common/util';
 const SetVideoCallTime = (props) => {
   const [callDate, setCallDate] = useState(new Date());
   const [callTime, setCallTime] = useState(new Date());
-  const { requestorId } = props;
+  const { requestorId, videoRequestIndex } = props;
   const confirmTime = () => {
     // selected date and time should be greater than current.
     const selectedDate = moment(
@@ -32,7 +32,7 @@ const SetVideoCallTime = (props) => {
       return false;
     } else {
       const dateTime = moment(`${selectedDate} ${selectTime}`).utc().format('YYYY-MM-DD HH:mm:ss');
-      props.confirmTime(requestorId, 1, dateTime);
+      props.confirmTime(requestorId, 1, dateTime, videoRequestIndex);
     }
   };
 

@@ -17,7 +17,7 @@ const VideoRequestLists = (props) => {
       <Card key={index}>
 
         <CardBody className="p-0" style={{ marginTop: '5px', marginBottom: '5px' }}>
-          <Delete className="float-right mr-1" onClick={() => props.updateRequest(item.userId, 2)} />
+          <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => props.updateRequest(item.userId, 2, index)} />
           <div className="col" key={index}>
             <div className="row">
               <img
@@ -36,7 +36,7 @@ const VideoRequestLists = (props) => {
                       <Button
                         className="acceptButton"
                         color="primary"
-                        onClick={() => props.updateRequest(item.userId, 1)}
+                        onClick={() => props.updateRequest(item.userId, 1, index)}
                       >
                         Accept
                       </Button>
