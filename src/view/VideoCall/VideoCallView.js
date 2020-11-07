@@ -1,61 +1,84 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useLocation } from "react-router-dom";
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable no-shadow */
+import React, { useState, useEffect, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../../firebase/Auth';
+
+const { currentUser } = useContext(AuthContext);
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
-const VideoCallView = props => {
-      const jitsiContainerId = "jitsi-container-id";
-      const [jitsi, setJitsi] = useState({});
-      let query = useQuery();
-      let roomname = query.get('r');
+const VideoCallView = (props) => {
+  const jitsiContainerId = 'jitsi-container-id';
+  const [jitsi, setJitsi] = useState({});
+  const [roomName, setRoomName] = useState('');
+  const query = useQuery();
+  const roomQueryId = query.get('r');
 
-      useEffect(() => {
-        initialiseJitsi();
-
-        return () => jitsi?.dispose?.();
-      }, []);
-
-      const evenListen = () => {
-
-      }
-      
-      const loadJitsiScript = () => {
-        let resolveLoadJitsiScriptPromise = null;
-
-        const loadJitsiScriptPromise = new Promise((resolve) => {
-          resolveLoadJitsiScriptPromise = resolve;
-        });
-
-        const script = document.createElement("script");
-        script.src = "https://meet.jit.si/external_api.js";
-        script.async = true;
-        script.onload = resolveLoadJitsiScriptPromise;
-        document.body.appendChild(script);
-
-        return loadJitsiScriptPromise;
+  useEffect(() => {
+    currentUser.getIdToken().get((token) => {
+      axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const data = {
+        roomQueryId,
       };
+      axios.post('getroomName', data).then((res) => {
+        const resData = res.data;
+        const { roomName } = resData;
+        setRoomName(roomName);
+      }).catch((error) => {
+        console.error(error);
+      });
+    }).catch((error) => {
+      console.error(error);
+    });
+  });
 
-      const initialiseJitsi = async () => {
-        if (!window.JitsiMeetExternalAPI) {
-          await loadJitsiScript();
-        }
+  const loadJitsiScript = () => {
+    let resolveLoadJitsiScriptPromise = null;
 
-        const _jitsi = new window.JitsiMeetExternalAPI("meet.jit.si", {
-          roomName: roomname,
-          parentNode: document.getElementById(jitsiContainerId),
-        });
+    const loadJitsiScriptPromise = new Promise((resolve) => {
+      resolveLoadJitsiScriptPromise = resolve;
+    });
 
-        setJitsi(_jitsi);
-                _jitsi.addEventListener("participantRoleChanged", function(
-                  event
-                ) {
-                  console.log(JSON.stringify(event));
-                  if (event.role === "moderator") {
-                  }
-                });
-      };
+    const script = document.createElement('script');
+    script.src = 'https://meet.jit.si/external_api.js';
+    script.async = true;
+    script.onload = resolveLoadJitsiScriptPromise;
+    document.body.appendChild(script);
 
-    return <div id={jitsiContainerId} style={{ height: "100vh", width: "100%" }} />;
-}
+    return loadJitsiScriptPromise;
+  };
+
+  const initialiseJitsi = async () => {
+    if (!window.JitsiMeetExternalAPI) {
+      await loadJitsiScript();
+    }
+
+    const jitsi = new window.JitsiMeetExternalAPI('meet.jit.si', {
+      roomName,
+      parentNode: document.getElementById(jitsiContainerId),
+    });
+
+    setJitsi(jitsi);
+    jitsi.addEventListener('participantRoleChanged', (
+      event,
+    ) => {
+      console.log(JSON.stringify(event));
+    });
+  };
+
+  useEffect(() => {
+    if (roomName) initialiseJitsi();
+
+    return () => jitsi?.dispose?.();
+  }, [roomName]);
+
+  const evenListen = () => {
+
+  };
+
+  return <div id={jitsiContainerId} style={{ height: '100vh', width: '100%' }} />;
+};
 
 export default VideoCallView;
