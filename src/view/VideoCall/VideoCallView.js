@@ -5,11 +5,10 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../firebase/Auth';
 
-const { currentUser } = useContext(AuthContext);
-
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 const VideoCallView = (props) => {
+  const { currentUser } = useContext(AuthContext);
   const jitsiContainerId = 'jitsi-container-id';
   const [jitsi, setJitsi] = useState({});
   const [roomName, setRoomName] = useState('');
@@ -17,7 +16,7 @@ const VideoCallView = (props) => {
   const roomQueryId = query.get('r');
 
   useEffect(() => {
-    currentUser.getIdToken().get((token) => {
+    currentUser.getIdToken().then((token) => {
       axios.defaults.headers.common.Authorization = `Bearer ${token}`;
       const data = {
         roomQueryId,

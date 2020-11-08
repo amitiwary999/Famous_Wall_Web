@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import classnames from 'classnames';
+import { useHistory } from "react-router-dom";
 import FamousCardView from './FamousCardView';
 import UploadMedia from './UploadMedia';
 import {
@@ -27,6 +28,7 @@ import VideoRequestLists from './VideoRequestList/VideoRequestLists';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
+  const history = useHistory();
 
   const {
     famousPosts, lastItemId, hasMoreItems, loadItemStatus,
@@ -89,6 +91,17 @@ const Home = () => {
       dispatch(fetchFamousPosts(lastItemId));
     }
   }, []);
+
+  const joinCallRequest = (item) => {
+    const { id } = item;
+    const queryData = {
+      r: id,
+    };
+    const urlSearchParams = new URLSearchParams(queryData);
+    const queryParameter = urlSearchParams.toString();
+    const path = `/videocall?${queryParameter}`;
+    history.push(path);
+  };
 
   const updateVideoRequest = (status, index) => {
     const request = videoRequest[index];
@@ -333,7 +346,7 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
-        {videoRequest && videoRequest.length > 0 && (
+        {((videoRequest && videoRequest.length > 0) || (videoRequestSent && videoRequestSent.length > 0)) && (
           <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
             <Card>
               <p className="m-1" style={{ fontWeight: 'bold' }}>
@@ -378,7 +391,7 @@ const Home = () => {
                       </TabPane>
                       <TabPane tabId="2">
                         <VideoRequestLists
-                          updateRequest={acceptRejectRequest}
+                          joinCallRequest={joinCallRequest}
                           type={1}
                           videoRequests={videoRequestSent}
                         />

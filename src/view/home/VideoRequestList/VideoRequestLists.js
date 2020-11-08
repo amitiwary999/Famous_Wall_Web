@@ -48,9 +48,20 @@ const VideoRequestLists = (props) => {
                   {item.status === 1 && (
                   <div className="row">
                     <div className="col">
-                      <p>
-                        {moment(item.updatedAt).fromNow()}
-                      </p>
+                      {((moment(item.updatedAt).valueOf() - Date.now()) > 300000) ? (
+                        <Button
+                          className="acceptButton"
+                          color="primary"
+                          onClick={() => props.joinCallRequest(item)}
+                        >
+                          Join Call
+                        </Button>
+                      )
+                        : (
+                          <p>
+                            {moment(item.updatedAt).fromNow()}
+                          </p>
+                        )}
                     </div>
                   </div>
                   )}
@@ -64,12 +75,9 @@ const VideoRequestLists = (props) => {
   };
   return (
     <Col>
-      <Card>
-        <p className="m-1" style={{ fontWeight: 'bold' }}>Video Call Request</p>
-        <CardBody>
-          {videoRequests.map((item, index) => videolist(item, index))}
-        </CardBody>
-      </Card>
+
+      {videoRequests.map((item, index) => videolist(item, index))}
+
     </Col>
   );
 };
