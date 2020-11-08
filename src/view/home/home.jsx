@@ -2,19 +2,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import {
-  Card, Badge, Col, CardBody, Button, CardHeader, UncontrolledDropdown, DropdownToggle, DropdownMenu, Row, Media,
+  Card, Badge, Col, CardBody, Button, CardHeader, UncontrolledDropdown, DropdownToggle, DropdownMenu, Row, Media, TabContent, TabPane, Nav, NavItem, NavLink,
 } from 'reactstrap';
 import { Video, Image, Music } from 'react-feather';
 import Dropzone from 'react-dropzone';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import classnames from 'classnames';
 import FamousCardView from './FamousCardView';
 import UploadMedia from './UploadMedia';
 import {
   VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE,
 } from '../../common/util';
-import { fetchFamousPosts, fetchVideoRequest, postVideoCallRequest } from '../../redux/action/homeAction';
+import {
+  fetchFamousPosts, fetchVideoInvite, fetchVideoRequest, postVideoCallRequest,
+} from '../../redux/action/homeAction';
 import { AuthContext } from '../../firebase/Auth';
 import Login from '../login/Login';
 import Spinner from '../../firebase/LoadingSpinner';
@@ -39,9 +42,12 @@ const Home = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [videoRequest, setVideoRequest] = useState([]);
+  const [videoRequestSent, setVideoRequestSent] = useState([]);
   const [requestorId, setRequestorId] = useState('');
   const [confirmTime, setConfirmTime] = useState(false);
   const [videoRequestIndex, setVideoRequestIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState('1');
+  const [active, setActive] = useState('1');
   const dispatch = useDispatch();
 
   const getVideoRequest = (token) => {
@@ -54,11 +60,28 @@ const Home = () => {
       });
   };
 
+  const getVideoInvite = (token) => {
+    fetchVideoInvite(token)
+      .then((res) => {
+        setVideoRequestSent(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const toggle = (tab) => {
+    if (active !== tab) {
+      setActive(tab);
+    }
+  };
+
   useEffect(() => {
     if (currentUser) {
       currentUser.getIdToken().then((token) => {
         dispatch(fetchFamousPosts(lastItemId, token));
         getVideoRequest(token);
+        getVideoInvite(token);
       }).catch((error) => {
         console.log(error);
       });
@@ -312,10 +335,59 @@ const Home = () => {
         </Col>
         {videoRequest && videoRequest.length > 0 && (
           <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
-            <VideoRequestLists
-              updateRequest={acceptRejectRequest}
-              videoRequests={videoRequest}
-            />
+            <Card>
+              <p className="m-1" style={{ fontWeight: 'bold' }}>
+                Video Call Request
+              </p>
+              <CardBody>
+                <TabContent activeTab={activeTab}>
+                  <TabPane tabId="1">
+                    <Nav tabs>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: active === '1',
+                          })}
+                          onClick={() => {
+                            toggle('1');
+                          }}
+                        >
+                          Received
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: active === '2',
+                          })}
+                          onClick={() => {
+                            toggle('2');
+                          }}
+                        >
+                          Sent
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                    <TabContent className="py-50" activeTab={active}>
+                      <TabPane tabId="1">
+                        <VideoRequestLists
+                          updateRequest={acceptRejectRequest}
+                          type={0}
+                          videoRequests={videoRequest}
+                        />
+                      </TabPane>
+                      <TabPane tabId="2">
+                        <VideoRequestLists
+                          updateRequest={acceptRejectRequest}
+                          type={1}
+                          videoRequests={videoRequestSent}
+                        />
+                      </TabPane>
+                    </TabContent>
+                  </TabPane>
+                </TabContent>
+              </CardBody>
+            </Card>
           </Col>
         )}
       </Row>

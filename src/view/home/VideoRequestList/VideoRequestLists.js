@@ -9,7 +9,7 @@ import './VideoRequestList.css';
 import { Delete } from 'react-feather';
 
 const VideoRequestLists = (props) => {
-  const { videoRequests } = props;
+  const { videoRequests, type } = props;
   const videolist = (item, index) => {
     const profileImg = item.userDp;
     const name = item.userName;
@@ -32,13 +32,16 @@ const VideoRequestLists = (props) => {
                   {item.status === 0 && (
                   <div className="row">
                     <div className="col">
-                      <Button
-                        className="acceptButton"
-                        color="primary"
-                        onClick={() => props.updateRequest(item.userId, 1, index)}
-                      >
-                        Accept
-                      </Button>
+                      {type === 0 ? (
+                        <Button
+                          className="acceptButton"
+                          color="primary"
+                          onClick={() => props.updateRequest(item.userId, 1, index)}
+                        >
+                          Accept
+                        </Button>
+                      )
+                        : (<p>Pending</p>)}
                     </div>
                   </div>
                   )}
@@ -62,7 +65,7 @@ const VideoRequestLists = (props) => {
   return (
     <Col>
       <Card>
-        <p className="m-1" style={{fontWeight: 'bold'}}>Video Call Request</p>
+        <p className="m-1" style={{ fontWeight: 'bold' }}>Video Call Request</p>
         <CardBody>
           {videoRequests.map((item, index) => videolist(item, index))}
         </CardBody>

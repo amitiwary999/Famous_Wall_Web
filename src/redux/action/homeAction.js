@@ -1,86 +1,98 @@
-import axios from 'axios'
-import firebase from '../../firebase/Firebase'
+import axios from 'axios';
+import firebase from '../../firebase/Firebase';
 
-export const fetchFamousPosts = (lastItemId, token) => dispatch => {
-    dispatch({type: 'LOAD_NEW_POSTS_PENDING'})
-    if(token)
-    axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
-    let data = {
-        nextKey: lastItemId,
-        limit: 20
+export const fetchFamousPosts = (lastItemId, token) => (dispatch) => {
+  dispatch({ type: 'LOAD_NEW_POSTS_PENDING' });
+  if (token) axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const data = {
+    nextKey: lastItemId,
+    limit: 20,
+  };
+  axios.post('getBlogSql', data).then((res) => {
+    // console.log("res "+JSON.stringify(res.data))
+    if (res && res.data) {
+      dispatch({ type: 'LOAD_NEW_POSTS_SUCCESS' });
+      const { data } = res;
+      if (data.length > 0) {
+        const lastItemPostId = data[data.length - 1].postId;
+        dispatch({ type: 'LOADED_NEW_POSTS', payload: data });
+        dispatch({ type: 'UPDATE_LAST_ITEM', payload: lastItemPostId });
+      } else {
+        dispatch({ type: 'NO_MORE_ITEM' });
+      }
+    } else {
+      dispatch({ type: 'LOAD_NEW_POSTS_FAILURE' });
     }
-    axios.post('getBlogSql', data).then(res => {
-       // console.log("res "+JSON.stringify(res.data))
-        if(res && res.data){
-            dispatch({ type: 'LOAD_NEW_POSTS_SUCCESS' })
-            let data = res.data;
-            if(data.length>0){
-                let lastItemPostId = data[data.length-1].postId
-                dispatch({type: 'LOADED_NEW_POSTS', payload: data})
-                dispatch({type: 'UPDATE_LAST_ITEM', payload: lastItemPostId})
-            }else{
-                dispatch({type: 'NO_MORE_ITEM'})
-            }
-        }else{
-            dispatch({ type: 'LOAD_NEW_POSTS_FAILURE' })
-        }
-    }).catch(error => {
-        dispatch({ type: 'LOAD_NEW_POSTS_FAILURE' })
-        console.log(error)
-    })
-}
+  }).catch((error) => {
+    dispatch({ type: 'LOAD_NEW_POSTS_FAILURE' });
+    console.log(error);
+  });
+};
 
-export const likeOrUnlikePost = (famousUserId, incr, pos, token)=> dispatch =>{
-    dispatch({type: 'POST_LIKE_SUCCESS', payload: {userId: famousUserId, pos: pos}})
+export const likeOrUnlikePost = (famousUserId, incr, pos, token) => (dispatch) => {
+  dispatch({ type: 'POST_LIKE_SUCCESS', payload: { userId: famousUserId, pos } });
 
-    axios.defaults.headers.common['Authorization'] = 'Bearer '+token;
-    let data = {
-        userId: famousUserId,
-        increment: incr
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const data = {
+    userId: famousUserId,
+    increment: incr,
+  };
+
+  axios.post('setPostLikeSql', data).then((res) => {
+    if (res && res.data) {
+
+    } else {
+      dispatch({ type: 'POST_LIKE_FAILED', payload: { userId: famousUserId, pos } });
     }
+  }).catch((error) => {
+    console.log(`error ${error} ${JSON.stringify(error.response)}`);
+    dispatch({ type: 'POST_LIKE_FAILED', payload: { userId: famousUserId, pos } });
+  });
+};
 
-    axios.post('setPostLikeSql', data).then(res => {
-        if(res && res.data){
-
-        }else{
-            dispatch({type: 'POST_LIKE_FAILED', payload: {userId: famousUserId, pos: pos}})
-        }
-    }).catch(error => {
-        console.log("error "+error+" "+JSON.stringify(error.response));
-        dispatch({type: 'POST_LIKE_FAILED', payload: {userId: famousUserId, pos: pos}})
-
+//received
+export const fetchVideoRequest = (token) => new Promise((resolve, reject) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios
+    .post('getVideoRequestReceived')
+    .then((res) => {
+      if (res && res.data) {
+        resolve(res.data);
+      } else {
+        reject('no data');
+      }
     })
-}
+    .catch((error) => {
+      console.log(error);
+      reject(error);
+    });
+});
 
-export const fetchVideoRequest = token => {
-    return new Promise((resolve, reject) => {
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        axios
-        .post("getVideoRequest")
-            .then((res) => {
-                if(res && res.data){
-                    resolve(res.data);
-                }else{
-                    reject('no data');
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-                reject(error);
-            });
-
+//sent
+export const fetchVideoInvite = (token) => new Promise((resolve, reject) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios
+    .post('getVideoRequestSent')
+    .then((res) => {
+      if (res && res.data) {
+        resolve(res.data);
+      } else {
+        reject('no data');
+      }
     })
-}
+    .catch((error) => {
+      console.log(error);
+      reject(error);
+    });
+});
 
-//data = {inviteeId: to whom wamt to send invite, status: 0-> request, 1->accept, 2->reject}
-export const postVideoCallRequest = (token, data) => {
-    return new Promise((resolve, reject) => {
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        axios.post("postVideoRequest", data)
-        .then(res => {
-            resolve('success')
-        }).catch(error => {
-            reject(error);
-        })
-    })
-}
+// data = {inviteeId: to whom wamt to send invite, status: 0-> request, 1->accept, 2->reject}
+export const postVideoCallRequest = (token, data) => new Promise((resolve, reject) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios.post('postVideoRequest', data)
+    .then((res) => {
+      resolve('success');
+    }).catch((error) => {
+      reject(error);
+    });
+});
