@@ -23,6 +23,8 @@ const VideoCallView = (props) => {
       };
       axios.post('getroomName', data).then((res) => {
         const resData = res.data;
+        console.log(`res ${JSON.stringify(resData)}`);
+
         const { roomName } = resData;
         setRoomName(roomName);
       }).catch((error) => {
@@ -31,7 +33,7 @@ const VideoCallView = (props) => {
     }).catch((error) => {
       console.error(error);
     });
-  });
+  }, []);
 
   const loadJitsiScript = () => {
     let resolveLoadJitsiScriptPromise = null;
@@ -49,7 +51,7 @@ const VideoCallView = (props) => {
     return loadJitsiScriptPromise;
   };
 
-  const initialiseJitsi = async () => {
+  const initialiseJitsi = async (roomName) => {
     if (!window.JitsiMeetExternalAPI) {
       await loadJitsiScript();
     }
@@ -68,7 +70,7 @@ const VideoCallView = (props) => {
   };
 
   useEffect(() => {
-    if (roomName) initialiseJitsi();
+    if (roomName) initialiseJitsi(roomName);
 
     return () => jitsi?.dispose?.();
   }, [roomName]);
