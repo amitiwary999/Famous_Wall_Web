@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-console */
 import React, { useState, useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -10,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import classnames from 'classnames';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import FamousCardView from './FamousCardView';
 import UploadMedia from './UploadMedia';
 import {
@@ -25,6 +28,7 @@ import Spinner from '../../firebase/LoadingSpinner';
 import VideoRequestList from './VideoRequestList';
 import SetVideoCallTime from './SetVideoCallTime';
 import VideoRequestLists from './VideoRequestList/VideoRequestLists';
+import './home.scss';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -50,6 +54,7 @@ const Home = () => {
   const [videoRequestIndex, setVideoRequestIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('1');
   const [active, setActive] = useState('1');
+  const [chartType, setChartType] = useState(1);
   const dispatch = useDispatch();
 
   const getVideoRequest = (token) => {
@@ -346,62 +351,67 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
-        {((videoRequest && videoRequest.length > 0) || (videoRequestSent && videoRequestSent.length > 0)) && (
-          <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
-            <Card>
-              <p className="m-1" style={{ fontWeight: 'bold' }}>
-                Video Call Request
-              </p>
-              <CardBody>
-                <TabContent activeTab={activeTab}>
-                  <TabPane tabId="1">
-                    <Nav tabs>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: active === '1',
-                          })}
-                          onClick={() => {
-                            toggle('1');
-                          }}
-                        >
+        {((videoRequest && videoRequest.length > 0) || (videoRequestSent
+        && videoRequestSent.length > 0)) && (
+        <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
+          <Card>
+            <p className="m-1" style={{ fontWeight: 'bold' }}>
+              Video Call Request
+            </p>
+            <CardBody>
+              <TabContent activeTab={activeTab}>
+                <TabPane tabId="1">
+                  <Nav className="justify-content-center" style={{borderBottomColor: 'white'}} tabs>
+                    <NavItem className="d-inline-block">
+                      <NavLink
+                        className={classnames({
+                          active: active === '1',
+                        })}
+                        onClick={() => {
+                          toggle('1');
+                        }}
+                      >
+                        <p className="m-0" style={{ color: 'white' }}>
                           Received
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: active === '2',
-                          })}
-                          onClick={() => {
-                            toggle('2');
-                          }}
-                        >
+                        </p>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem className="d-inline-block">
+                      <NavLink
+                        className={classnames({
+                          active: active === '2',
+                        })}
+                        onClick={() => {
+                          toggle('2');
+                        }}
+                      >
+                        <p className="m-0" style={{ color: 'white' }}>
                           Sent
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                    <TabContent className="py-50" activeTab={active}>
-                      <TabPane tabId="1">
-                        <VideoRequestLists
-                          updateRequest={acceptRejectRequest}
-                          type={0}
-                          videoRequests={videoRequest}
-                        />
-                      </TabPane>
-                      <TabPane tabId="2">
-                        <VideoRequestLists
-                          joinCallRequest={joinCallRequest}
-                          type={1}
-                          videoRequests={videoRequestSent}
-                        />
-                      </TabPane>
-                    </TabContent>
-                  </TabPane>
-                </TabContent>
-              </CardBody>
-            </Card>
-          </Col>
+                        </p>
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                  <TabContent className="py-50" activeTab={active}>
+                    <TabPane tabId="1">
+                      <VideoRequestLists
+                        updateRequest={acceptRejectRequest}
+                        type={0}
+                        videoRequests={videoRequest}
+                      />
+                    </TabPane>
+                    <TabPane tabId="2">
+                      <VideoRequestLists
+                        joinCallRequest={joinCallRequest}
+                        type={1}
+                        videoRequests={videoRequestSent}
+                      />
+                    </TabPane>
+                  </TabContent>
+                </TabPane>
+              </TabContent>
+            </CardBody>
+          </Card>
+        </Col>
         )}
       </Row>
       {showSelectedMediaCard && (
