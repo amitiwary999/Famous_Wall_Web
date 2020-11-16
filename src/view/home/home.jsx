@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -5,7 +6,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import {
-  Card, Badge, Col, CardBody, Button, CardHeader, UncontrolledDropdown, DropdownToggle, DropdownMenu, Row, Media, TabContent, TabPane, Nav, NavItem, NavLink,
+  Card, Badge, Col, CardBody, Button, UncontrolledDropdown, DropdownToggle,
+  DropdownMenu, Row, TabContent, TabPane, Nav, NavItem, NavLink,
 } from 'reactstrap';
 import { Video, Image, Music } from 'react-feather';
 import Dropzone from 'react-dropzone';
@@ -17,7 +19,7 @@ import { useHistory } from 'react-router-dom';
 import FamousCardView from './FamousCardView';
 import UploadMedia from './UploadMedia';
 import {
-  VIDEO_MEDIA, IMAGE_MEDIA, authToken, getHash, PENDING, SUCCESS, FAILURE,
+  VIDEO_MEDIA, IMAGE_MEDIA, PENDING, SUCCESS, FAILURE,
 } from '../../common/util';
 import {
   fetchFamousPosts, fetchVideoInvite, fetchVideoRequest, postVideoCallRequest,
@@ -54,7 +56,6 @@ const Home = () => {
   const [videoRequestIndex, setVideoRequestIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('1');
   const [active, setActive] = useState('1');
-  const [chartType, setChartType] = useState(1);
   const dispatch = useDispatch();
 
   const getVideoRequest = (token) => {
@@ -139,7 +140,7 @@ const Home = () => {
           })
           .catch((error) => {
             updateVideoRequest(0, index);
-            console.log(error);
+            console.log(JSON.stringify(error));
             setShowLoader(false);
           });
       })
@@ -241,11 +242,71 @@ const Home = () => {
                       wheelPropagation: false,
                     }}
                   >
-                    <div style={{ width: '30vh' }}>
-                      <VideoRequestList
-                        updateRequest={acceptRejectRequest}
-                        videoRequests={videoRequest}
-                      />
+                    <div style={{ width: '35vh'}}>
+                      <p className="m-1" style={{ fontWeight: 'bold' }}>
+                        Video Call Request
+                      </p>
+
+                      <TabContent activeTab={activeTab}>
+                        <TabPane tabId="1">
+                          <Nav
+                            className="justify-content-center"
+                            style={{ borderBottomColor: 'white' }}
+                            tabs
+                          >
+                            <NavItem className="d-inline-block">
+                              <NavLink
+                                className={classnames({
+                                  active: active === '1',
+                                })}
+                                onClick={() => {
+                                  toggle('1');
+                                }}
+                              >
+                                <p
+                                  className="m-0"
+                                  style={{ color: 'white' }}
+                                >
+                                  Received
+                                </p>
+                              </NavLink>
+                            </NavItem>
+                            <NavItem className="d-inline-block">
+                              <NavLink
+                                className={classnames({
+                                  active: active === '2',
+                                })}
+                                onClick={() => {
+                                  toggle('2');
+                                }}
+                              >
+                                <p
+                                  className="m-0"
+                                  style={{ color: 'white' }}
+                                >
+                                  Sent
+                                </p>
+                              </NavLink>
+                            </NavItem>
+                          </Nav>
+                          <TabContent className="py-50" activeTab={active}>
+                            <TabPane tabId="1">
+                              <VideoRequestLists
+                                updateRequest={acceptRejectRequest}
+                                videoRequests={videoRequest}
+                                type={0}
+                              />
+                            </TabPane>
+                            <TabPane tabId="2">
+                              <VideoRequestLists
+                                updateRequest={acceptRejectRequest}
+                                videoRequests={videoRequestSent}
+                                type={1}
+                              />
+                            </TabPane>
+                          </TabContent>
+                        </TabPane>
+                      </TabContent>
                     </div>
                   </PerfectScrollbar>
                 </DropdownMenu>
@@ -351,67 +412,71 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
-        {((videoRequest && videoRequest.length > 0) || (videoRequestSent
-        && videoRequestSent.length > 0)) && (
-        <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
-          <Card>
-            <p className="m-1" style={{ fontWeight: 'bold' }}>
-              Video Call Request
-            </p>
-            <CardBody>
-              <TabContent activeTab={activeTab}>
-                <TabPane tabId="1">
-                  <Nav className="justify-content-center" style={{borderBottomColor: 'white'}} tabs>
-                    <NavItem className="d-inline-block">
-                      <NavLink
-                        className={classnames({
-                          active: active === '1',
-                        })}
-                        onClick={() => {
-                          toggle('1');
-                        }}
-                      >
-                        <p className="m-0" style={{ color: 'white' }}>
-                          Received
-                        </p>
-                      </NavLink>
-                    </NavItem>
-                    <NavItem className="d-inline-block">
-                      <NavLink
-                        className={classnames({
-                          active: active === '2',
-                        })}
-                        onClick={() => {
-                          toggle('2');
-                        }}
-                      >
-                        <p className="m-0" style={{ color: 'white' }}>
-                          Sent
-                        </p>
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                  <TabContent className="py-50" activeTab={active}>
-                    <TabPane tabId="1">
-                      <VideoRequestLists
-                        updateRequest={acceptRejectRequest}
-                        type={0}
-                        videoRequests={videoRequest}
-                      />
-                    </TabPane>
-                    <TabPane tabId="2">
-                      <VideoRequestLists
-                        joinCallRequest={joinCallRequest}
-                        type={1}
-                        videoRequests={videoRequestSent}
-                      />
-                    </TabPane>
-                  </TabContent>
-                </TabPane>
-              </TabContent>
-            </CardBody>
-          </Card>
-        </Col>
+        {((videoRequest && videoRequest.length > 0)
+          || (videoRequestSent && videoRequestSent.length > 0)) && (
+          <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
+            <Card>
+              <p className="m-1" style={{ fontWeight: 'bold' }}>
+                Video Call Request
+              </p>
+              <CardBody>
+                <TabContent activeTab={activeTab}>
+                  <TabPane tabId="1">
+                    <Nav
+                      className="justify-content-center"
+                      style={{ borderBottomColor: 'white' }}
+                      tabs
+                    >
+                      <NavItem className="d-inline-block">
+                        <NavLink
+                          className={classnames({
+                            active: active === '1',
+                          })}
+                          onClick={() => {
+                            toggle('1');
+                          }}
+                        >
+                          <p className="m-0" style={{ color: 'white' }}>
+                            Received
+                          </p>
+                        </NavLink>
+                      </NavItem>
+                      <NavItem className="d-inline-block">
+                        <NavLink
+                          className={classnames({
+                            active: active === '2',
+                          })}
+                          onClick={() => {
+                            toggle('2');
+                          }}
+                        >
+                          <p className="m-0" style={{ color: 'white' }}>
+                            Sent
+                          </p>
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                    <TabContent className="py-50" activeTab={active}>
+                      <TabPane tabId="1">
+                        <VideoRequestLists
+                          updateRequest={acceptRejectRequest}
+                          type={0}
+                          videoRequests={videoRequest}
+                        />
+                      </TabPane>
+                      <TabPane tabId="2">
+                        <VideoRequestLists
+                          joinCallRequest={joinCallRequest}
+                          type={1}
+                          videoRequests={videoRequestSent}
+                        />
+                      </TabPane>
+                    </TabContent>
+                  </TabPane>
+                </TabContent>
+              </CardBody>
+            </Card>
+          </Col>
         )}
       </Row>
       {showSelectedMediaCard && (

@@ -4,14 +4,14 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
-import { Delete, Video } from 'react-feather';
+import { Delete} from 'react-feather';
 import moment from 'moment';
 import {
   Button, Container,
 } from 'reactstrap';
 
 const VideoRequestList = (props) => {
-  const { videoRequests } = props;
+  const { videoRequests, type } = props;
 
   return (
     videoRequests.map((item, index) => {
@@ -36,22 +36,36 @@ const VideoRequestList = (props) => {
                   {item.status === 0 && (
                   <div className="row">
                     <div className="col">
-                      <Button
-                        className="acceptButton"
-                        color="primary"
-                        onClick={() => props.updateRequest(item.userId, 1, index)}
-                      >
-                        Accept
-                      </Button>
+                      {type === 0 ? (
+                        <Button
+                          className="acceptButton"
+                          color="primary"
+                          onClick={() => props.updateRequest(item.userId, 1, index)}
+                        >
+                          Accept
+                        </Button>
+                      )
+                        : (<p>Pending</p>)}
                     </div>
                   </div>
                   )}
                   {item.status === 1 && (
                   <div className="row">
                     <div className="col">
-                      <p>
-                        {moment(item.updatedAt).fromNow()}
-                      </p>
+                      {((moment(item.updatedAt).valueOf() - Date.now()) > 300000) ? (
+                        <Button
+                          className="acceptButton"
+                          color="primary"
+                          onClick={() => props.joinCallRequest(item)}
+                        >
+                          Join Call
+                        </Button>
+                      )
+                        : (
+                          <p>
+                            {moment(item.updatedAt).fromNow()}
+                          </p>
+                        )}
                     </div>
                   </div>
                   )}

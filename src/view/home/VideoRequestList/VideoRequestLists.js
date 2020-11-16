@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import {
-  Button, Card, CardBody, CardHeader, Col,
+  Button, Card, CardBody, Col,
 } from 'reactstrap';
 import moment from 'moment';
 import './VideoRequestList.css';
@@ -11,13 +11,14 @@ import { Delete } from 'react-feather';
 const VideoRequestLists = (props) => {
   const { videoRequests, type } = props;
   const videolist = (item, index) => {
+    if (item.status === 2) return null;
     const profileImg = item.userDp;
     const name = item.userName;
     return (
       <Card key={index}>
         <CardBody className="p-0" style={{ marginTop: '5px', marginBottom: '5px' }}>
-          <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => props.updateRequest(item.userId, 2, index)} />
           <div className="col" key={index}>
+            <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => props.updateRequest(item.userId, 2, index)} />
             <div className="row">
               <img
                 src={profileImg}
@@ -48,13 +49,14 @@ const VideoRequestLists = (props) => {
                   {item.status === 1 && (
                   <div className="row">
                     <div className="col">
-                      {((moment(item.updatedAt).valueOf() - Date.now()) > 300000) ? (
+                      {console.log(`${moment(item.updatedAt).utc().format('hh:mm:ss A')} ${item.updatedAt}`)}
+                      {(((moment(item.updatedAt).valueOf() - Date.now() > 0) && (moment(item.updatedAt).valueOf() - Date.now()) <= 3605000)) ? (
                         <Button
                           className="acceptButton"
                           color="primary"
                           onClick={() => props.joinCallRequest(item)}
                         >
-                          Join Call
+                          {`${'Join Call at \n'}${moment(item.updatedAt).format('hh:mm:ss A')}`}
                         </Button>
                       )
                         : (
