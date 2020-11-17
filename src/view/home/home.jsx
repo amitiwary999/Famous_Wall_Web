@@ -129,7 +129,7 @@ const Home = () => {
       inviteeId: userId,
       status, // 0 means request
     };
-    if (status === 1) data.callTime = callTime;
+    data.callTime = callTime;
     currentUser
       .getIdToken()
       .then((token) => {
