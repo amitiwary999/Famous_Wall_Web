@@ -14,6 +14,8 @@ import {
   Row,
   Carousel,
   CarouselItem,
+  CarouselIndicators,
+  CarouselControl,
 } from 'reactstrap';
 import { Heart, Video } from 'react-feather';
 import moment from 'moment';
@@ -119,6 +121,7 @@ const FamousCardView = (props) => {
         <Card>
           <CardBody className="mx-sm-auto">
             <Carousel next={next} previous={previous} activeIndex={activeIndex}>
+              <CarouselIndicators items={desc} activeIndex={activeIndex} onClickHandler={goToIndex} />
               {desc.map((desc, index) => (
                 <CarouselItem key={index}>
                   <Col style={{ height: 'auto', maxWidth: '460px' }}>
@@ -166,6 +169,8 @@ const FamousCardView = (props) => {
                   </Col>
                 </CarouselItem>
               ))}
+              <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
+              <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
             </Carousel>
             <Row className="mx-2">
               <div
