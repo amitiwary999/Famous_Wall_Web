@@ -11,7 +11,7 @@ import { Delete } from 'react-feather';
 const VideoRequestLists = (props) => {
   const { videoRequests, type } = props;
   const videolist = (item, index) => {
-    if (item.status === 2) return null;
+    if (item.status === 2 && type === 0) return null;
     const profileImg = item.userDp;
     const name = item.userName;
     return (
@@ -49,7 +49,6 @@ const VideoRequestLists = (props) => {
                   {item.status === 1 && (
                   <div className="row">
                     <div className="col">
-                      {console.log(`${moment(item.updatedAt).utc().format('hh:mm:ss A')} ${item.updatedAt}`)}
                       {(((moment(item.updatedAt).valueOf() - Date.now() > 0) && (moment(item.updatedAt).valueOf() - Date.now()) <= 3605000)) ? (
                         <Button
                           className="acceptButton"
@@ -67,6 +66,13 @@ const VideoRequestLists = (props) => {
                     </div>
                   </div>
                   )}
+                  {item.status === 2 && (
+                    <div className="row">
+                      <div className="col">
+                        <p>Request denied</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -77,7 +83,6 @@ const VideoRequestLists = (props) => {
   };
   return (
     <Col>
-
       {videoRequests.map((item, index) => videolist(item, index))}
 
     </Col>

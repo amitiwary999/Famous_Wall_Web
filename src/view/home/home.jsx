@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -30,6 +31,7 @@ import Spinner from '../../firebase/LoadingSpinner';
 import VideoRequestList from './VideoRequestList';
 import SetVideoCallTime from './SetVideoCallTime';
 import VideoRequestLists from './VideoRequestList/VideoRequestLists';
+import firebase from '../../firebase/Firebase';
 import './home.scss';
 
 const Home = () => {
@@ -200,205 +202,226 @@ const Home = () => {
     setShowLogin(false);
   };
 
+  const logout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log('logout successfully');
+      })
+      .catch((error) => {
+        console.error(`logout failed ${error}`);
+      });
+  };
+
   return (
     <div>
-      <Col md={4} sm={6} className="mx-auto mt-2">
-        <Card>
-          <CardBody>
-            {videoRequest && videoRequest.length > 0 && (
-              <UncontrolledDropdown className="d-md-none">
-                <DropdownToggle
-                  tag="small"
-                  className="text-bold-500 cursor-pointer"
-                >
-                  <div className="d-flex justify-content-end mb-2">
-                    <Badge color="success" className=" mr-1 mb-1">
-                      {videoRequest && videoRequest.length > 0 && (
-                        <Badge
-                          pill
-                          color="danger"
-                          className="p-1 badge-up float-right"
-                          style={{
-                            marginRight: -8,
-                            marginTop: -6,
-                            fontSize: '12px',
-                          }}
-                        >
-                          {videoRequest.length}
+      <Row>
+        <Col md={4} sm={6} className="mx-auto mt-2">
+          <Card>
+            <CardBody>
+              <Row>
+                {currentUser && (
+                  <p onClick={() => logout()} style={{ cursor: 'pointer' }}>
+                    Logout
+                  </p>
+                )}
+                {videoRequest && videoRequest.length > 0 && (
+                  <UncontrolledDropdown className="d-md-none">
+                    <DropdownToggle
+                      tag="small"
+                      className="text-bold-500 cursor-pointer"
+                    >
+                      <div className="d-flex justify-content-end mb-2">
+                        <Badge color="success" className=" mr-1 mb-1">
+                          {videoRequest && videoRequest.length > 0 && (
+                            <Badge
+                              pill
+                              color="danger"
+                              className="p-1 badge-up float-right"
+                              style={{
+                                marginRight: -8,
+                                marginTop: -6,
+                                fontSize: '12px',
+                              }}
+                            >
+                              {videoRequest.length}
+                            </Badge>
+                          )}
+                          <Col className="p-2" style={{ cursor: 'pointer' }}>
+                            <Video size={16} />
+                            <span className="font-weight-bold ml-1">
+                              Call request
+                            </span>
+                          </Col>
                         </Badge>
-                      )}
-                      <Col className="p-2" style={{ cursor: 'pointer' }}>
-                        <Video size={16} />
-                        <span className="font-weight-bold ml-1">
-                          Call request
-                        </span>
-                      </Col>
-                    </Badge>
-                  </div>
-                </DropdownToggle>
-                <DropdownMenu>
-                  <PerfectScrollbar
-                    options={{
-                      wheelPropagation: false,
-                    }}
-                  >
-                    <div style={{ width: '35vh'}}>
-                      <p className="m-1" style={{ fontWeight: 'bold' }}>
-                        Video Call Request
-                      </p>
+                      </div>
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <PerfectScrollbar
+                        options={{
+                          wheelPropagation: false,
+                        }}
+                      >
+                        <div style={{ width: '35vh' }}>
+                          <p className="m-1" style={{ fontWeight: 'bold' }}>
+                            Video Call Request
+                          </p>
 
-                      <TabContent activeTab={activeTab}>
-                        <TabPane tabId="1">
-                          <Nav
-                            className="justify-content-center"
-                            style={{ borderBottomColor: 'white' }}
-                            tabs
-                          >
-                            <NavItem className="d-inline-block">
-                              <NavLink
-                                className={classnames({
-                                  active: active === '1',
-                                })}
-                                onClick={() => {
-                                  toggle('1');
-                                }}
-                              >
-                                <p
-                                  className="m-0"
-                                  style={{ color: 'white' }}
-                                >
-                                  Received
-                                </p>
-                              </NavLink>
-                            </NavItem>
-                            <NavItem className="d-inline-block">
-                              <NavLink
-                                className={classnames({
-                                  active: active === '2',
-                                })}
-                                onClick={() => {
-                                  toggle('2');
-                                }}
-                              >
-                                <p
-                                  className="m-0"
-                                  style={{ color: 'white' }}
-                                >
-                                  Sent
-                                </p>
-                              </NavLink>
-                            </NavItem>
-                          </Nav>
-                          <TabContent className="py-50" activeTab={active}>
+                          <TabContent activeTab={activeTab}>
                             <TabPane tabId="1">
-                              <VideoRequestLists
-                                updateRequest={acceptRejectRequest}
-                                videoRequests={videoRequest}
-                                type={0}
-                              />
-                            </TabPane>
-                            <TabPane tabId="2">
-                              <VideoRequestLists
-                                updateRequest={acceptRejectRequest}
-                                videoRequests={videoRequestSent}
-                                type={1}
-                              />
+                              <Nav
+                                className="justify-content-center"
+                                style={{ borderBottomColor: 'white' }}
+                                tabs
+                              >
+                                <NavItem className="d-inline-block">
+                                  <NavLink
+                                    className={classnames({
+                                      active: active === '1',
+                                    })}
+                                    onClick={() => {
+                                      toggle('1');
+                                    }}
+                                  >
+                                    <p
+                                      className="m-0"
+                                      style={{ color: 'white' }}
+                                    >
+                                      Received
+                                    </p>
+                                  </NavLink>
+                                </NavItem>
+                                <NavItem className="d-inline-block">
+                                  <NavLink
+                                    className={classnames({
+                                      active: active === '2',
+                                    })}
+                                    onClick={() => {
+                                      toggle('2');
+                                    }}
+                                  >
+                                    <p
+                                      className="m-0"
+                                      style={{ color: 'white' }}
+                                    >
+                                      Sent
+                                    </p>
+                                  </NavLink>
+                                </NavItem>
+                              </Nav>
+                              <TabContent className="py-50" activeTab={active}>
+                                <TabPane tabId="1">
+                                  <VideoRequestLists
+                                    updateRequest={acceptRejectRequest}
+                                    videoRequests={videoRequest}
+                                    type={0}
+                                  />
+                                </TabPane>
+                                <TabPane tabId="2">
+                                  <VideoRequestLists
+                                    updateRequest={acceptRejectRequest}
+                                    videoRequests={videoRequestSent}
+                                    type={1}
+                                  />
+                                </TabPane>
+                              </TabContent>
                             </TabPane>
                           </TabContent>
-                        </TabPane>
-                      </TabContent>
-                    </div>
-                  </PerfectScrollbar>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            )}
-            <p className="font-weight-bold">Make yourself famous</p>
-            {currentUser && (
-              <div className="d-flex justify-content-between pl-2 pr-2">
-                <Dropzone
-                  accept="video/*"
-                  onDrop={(acceptedFiles) => {
-                    console.log(acceptedFiles);
-                    setSelectedMediaFile(acceptedFiles[0]);
-                    setSelectedMediaType(VIDEO_MEDIA);
-                    setShowSelectedMediaCard(true);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <section>
-                      <div
-                        style={{ cursor: 'pointer' }}
-                        {...getRootProps({
-                          onClick: (event) => dropzoneClick(event),
-                        })}
-                      >
-                        <input {...getInputProps()} />
-                        <Badge pill color="info" className="mr-1 mb-1">
-                          <Video size={16} className="mr-2" />
-                          Video
-                        </Badge>
-                      </div>
-                    </section>
-                  )}
-                </Dropzone>
-                <Dropzone
-                  accept="image/*"
-                  onDrop={(acceptedFiles) => {
-                    console.log(acceptedFiles);
-                    setSelectedMediaFile(acceptedFiles[0]);
-                    setSelectedMediaType(IMAGE_MEDIA);
-                    setShowSelectedMediaCard(true);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <section>
-                      <div
-                        style={{ cursor: 'pointer' }}
-                        {...getRootProps({
-                          onClick: (event) => dropzoneClick(event),
-                        })}
-                      >
-                        <input {...getInputProps()} />
-                        <Badge pill color="info" className="mr-1 mb-1">
-                          <Image size={16} className="mr-2" />
-                          Image
-                        </Badge>
-                      </div>
-                    </section>
-                  )}
-                </Dropzone>
-                <Dropzone
-                  accept="audio/*"
-                  onDrop={(acceptedFiles) => console.log(acceptedFiles)}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <section>
-                      <div
-                        style={{ cursor: 'pointer' }}
-                        {...getRootProps({
-                          onClick: (event) => dropzoneClick(event),
-                        })}
-                      >
-                        <input {...getInputProps()} />
-                        <Badge pill color="info" className="mr-1 mb-1">
-                          <Music size={16} className="mr-2" />
-                          Audio
-                        </Badge>
-                      </div>
-                    </section>
-                  )}
-                </Dropzone>
-              </div>
-            )}
-            {!currentUser && (
-              <Button className="primary" onClick={() => setShowLogin(true)}>
-                Please Login
-                {' '}
-              </Button>
-            )}
-          </CardBody>
-        </Card>
-      </Col>
+                        </div>
+                      </PerfectScrollbar>
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                )}
+              </Row>
+              <p className="font-weight-bold">Make yourself famous</p>
+              {currentUser && (
+                <div className="d-flex justify-content-between pl-2 pr-2">
+                  <Dropzone
+                    accept="video/*"
+                    onDrop={(acceptedFiles) => {
+                      console.log(acceptedFiles);
+                      setSelectedMediaFile(acceptedFiles[0]);
+                      setSelectedMediaType(VIDEO_MEDIA);
+                      setShowSelectedMediaCard(true);
+                    }}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                      <section>
+                        <div
+                          style={{ cursor: 'pointer' }}
+                          {...getRootProps({
+                            onClick: (event) => dropzoneClick(event),
+                          })}
+                        >
+                          <input {...getInputProps()} />
+                          <Badge pill color="info" className="mr-1 mb-1">
+                            <Video size={16} className="mr-2" />
+                            Video
+                          </Badge>
+                        </div>
+                      </section>
+                    )}
+                  </Dropzone>
+                  <Dropzone
+                    accept="image/*"
+                    onDrop={(acceptedFiles) => {
+                      console.log(acceptedFiles);
+                      setSelectedMediaFile(acceptedFiles[0]);
+                      setSelectedMediaType(IMAGE_MEDIA);
+                      setShowSelectedMediaCard(true);
+                    }}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                      <section>
+                        <div
+                          style={{ cursor: 'pointer' }}
+                          {...getRootProps({
+                            onClick: (event) => dropzoneClick(event),
+                          })}
+                        >
+                          <input {...getInputProps()} />
+                          <Badge pill color="info" className="mr-1 mb-1">
+                            <Image size={16} className="mr-2" />
+                            Image
+                          </Badge>
+                        </div>
+                      </section>
+                    )}
+                  </Dropzone>
+                  <Dropzone
+                    accept="audio/*"
+                    onDrop={(acceptedFiles) => console.log(acceptedFiles)}
+                  >
+                    {({ getRootProps, getInputProps }) => (
+                      <section>
+                        <div
+                          style={{ cursor: 'pointer' }}
+                          {...getRootProps({
+                            onClick: (event) => dropzoneClick(event),
+                          })}
+                        >
+                          <input {...getInputProps()} />
+                          <Badge pill color="info" className="mr-1 mb-1">
+                            <Music size={16} className="mr-2" />
+                            Audio
+                          </Badge>
+                        </div>
+                      </section>
+                    )}
+                  </Dropzone>
+                </div>
+              )}
+              {!currentUser && (
+                <Button className="primary" onClick={() => setShowLogin(true)}>
+                  Please Login
+                  {' '}
+                </Button>
+              )}
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
       <Row>
         <Col md={7} lg={8} xl={9}>
           <div className="mx-auto">
@@ -412,6 +435,7 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
+        {console.log("ver "+videoRequest.length+" "+videoRequestSent.length)}
         {((videoRequest && videoRequest.length > 0)
           || (videoRequestSent && videoRequestSent.length > 0)) && (
           <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
