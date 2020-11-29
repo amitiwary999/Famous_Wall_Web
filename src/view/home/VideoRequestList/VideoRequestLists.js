@@ -10,15 +10,23 @@ import { Delete } from 'react-feather';
 
 const VideoRequestLists = (props) => {
   const { videoRequests, type } = props;
+
+  const updateRequest = (item, index) => {
+    if (type === 0) {
+      props.updateRequest(item.userId, 2, index);
+    } else {
+      props.deleteRequest(item.id, index);
+    }
+  };
   const videolist = (item, index) => {
-    if (item.status === 2 && type === 0) return null;
+    if ((item.status === 2 && type === 0) || item.status === 3) return null;
     const profileImg = item.userDp;
     const name = item.userName;
     return (
       <Card key={index}>
         <CardBody className="p-0" style={{ marginTop: '5px', marginBottom: '5px' }}>
           <div className="col" key={index}>
-            <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => props.updateRequest(item.userId, 2, index)} />
+            <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => updateRequest(item, index)} />
             <div className="row">
               <img
                 src={profileImg}

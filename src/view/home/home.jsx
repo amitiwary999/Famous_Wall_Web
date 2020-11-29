@@ -23,7 +23,7 @@ import {
   VIDEO_MEDIA, IMAGE_MEDIA, PENDING, SUCCESS, FAILURE,
 } from '../../common/util';
 import {
-  fetchFamousPosts, fetchVideoInvite, fetchVideoRequest, postVideoCallRequest,
+  fetchFamousPosts, fetchVideoInvite, fetchVideoRequest, postVideoCallRequest, deleteVideoCallRequest,
 } from '../../redux/action/homeAction';
 import { AuthContext } from '../../firebase/Auth';
 import Login from '../login/Login';
@@ -121,6 +121,45 @@ const Home = () => {
       ...videoRequest.slice(index + 1),
     ];
     setVideoRequest(updatedVideoRequest);
+  };
+
+  const updateVideoRequestSent = (status, index) => {
+    const request = videoRequestSent[index];
+    request.status = status;
+    // eslint-disable-next-line max-len
+    const updatedVideoRequest = [
+      ...videoRequest.slice(0, index),
+      request,
+      ...videoRequest.slice(index + 1),
+    ];
+    setVideoRequestSent(updatedVideoRequest);
+  };
+
+  const deleteCallRequest = (id, index) => {
+    updateVideoRequestSent(3, index);
+    setShowLoader(true);
+    const data = {
+      id,
+    };
+    currentUser
+      .getIdToken()
+      .then((token) => {
+        deleteVideoCallRequest(token, data)
+          .then((res) => {
+            console.log(`video call req ${res}`);
+            setShowLoader(false);
+          })
+          .catch((error) => {
+            updateVideoRequestSent(2, index);
+            console.log(JSON.stringify(error));
+            setShowLoader(false);
+          });
+      })
+      .catch((error) => {
+        updateVideoRequest(2, index);
+        console.error(error);
+        setShowLoader(false);
+      });
   };
 
   const acceptRejectApiCall = (userId, status, callTime, index) => {
@@ -435,7 +474,6 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
-        {console.log("ver "+videoRequest.length+" "+videoRequestSent.length)}
         {((videoRequest && videoRequest.length > 0)
           || (videoRequestSent && videoRequestSent.length > 0)) && (
           <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
@@ -491,6 +529,7 @@ const Home = () => {
                       <TabPane tabId="2">
                         <VideoRequestLists
                           joinCallRequest={joinCallRequest}
+                          deleteRequest={deleteCallRequest}
                           type={1}
                           videoRequests={videoRequestSent}
                         />

@@ -50,11 +50,12 @@ export const likeOrUnlikePost = (famousUserId, incr, pos, token) => (dispatch) =
   });
 };
 
-//received
+// received
 export const fetchVideoRequest = (token) => new Promise((resolve, reject) => {
+  console.log(`token invite ${token}`);
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   axios
-    .post('getVideoRequestReceived')
+    .get('receivedRequest')
     .then((res) => {
       if (res && res.data) {
         resolve(res.data);
@@ -68,11 +69,11 @@ export const fetchVideoRequest = (token) => new Promise((resolve, reject) => {
     });
 });
 
-//sent
+// sent
 export const fetchVideoInvite = (token) => new Promise((resolve, reject) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   axios
-    .post('getVideoRequestSent')
+    .get('sendRequest')
     .then((res) => {
       if (res && res.data) {
         resolve(res.data);
@@ -89,7 +90,18 @@ export const fetchVideoInvite = (token) => new Promise((resolve, reject) => {
 // data = {inviteeId: to whom wamt to send invite, status: 0-> request, 1->accept, 2->reject}
 export const postVideoCallRequest = (token, data) => new Promise((resolve, reject) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-  axios.post('postVideoRequest', data)
+  axios.post('sendRequest', data)
+    .then((res) => {
+      resolve('success');
+    }).catch((error) => {
+      reject(error);
+    });
+});
+
+export const deleteVideoCallRequest = (token, data) => new Promise((resolve, reject) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const requestBody = { data };
+  axios.delete('sendRequest', requestBody)
     .then((res) => {
       resolve('success');
     }).catch((error) => {
