@@ -86,32 +86,7 @@ const FamousCardView = (props) => {
   };
 
   const requestVideoCall = () => {
-    const cTime = moment()
-      .utc()
-      .format('YYYY-MM-DD HH:mm:ss');
-    const data = {
-      inviteeId: creatorId,
-      callTime: cTime,
-      status: 0, // 0 means request
-    };
-    if (currentUser) {
-      currentUser
-        .getIdToken()
-        .then((token) => {
-          postVideoCallRequest(token, data)
-            .then((res) => {
-              console.log(`video call req ${res}`);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      props.showLogin();
-    }
+    props.sendRequest(creatorId);
   };
 
   return (

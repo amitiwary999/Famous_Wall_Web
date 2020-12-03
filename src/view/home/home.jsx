@@ -20,7 +20,7 @@ import { useHistory } from 'react-router-dom';
 import FamousCardView from './FamousCardView';
 import UploadMedia from './UploadMedia';
 import {
-  VIDEO_MEDIA, IMAGE_MEDIA, PENDING, SUCCESS, FAILURE,
+  VIDEO_MEDIA, IMAGE_MEDIA, PENDING, SUCCESS, FAILURE, notify
 } from '../../common/util';
 import {
   fetchFamousPosts, fetchVideoInvite, fetchVideoRequest, postVideoCallRequest, deleteVideoCallRequest,
@@ -98,7 +98,7 @@ const Home = () => {
     } else {
       dispatch(fetchFamousPosts(lastItemId));
     }
-  }, []);
+  }, [currentUser]);
 
   const joinCallRequest = (item) => {
     const { id } = item;
@@ -213,8 +213,42 @@ const Home = () => {
       setShowLoader(false);
     }
   }, [loadItemStatus]);
+
   const closeSelectedMediaCard = () => {
     setShowSelectedMediaCard(false);
+  };
+
+  const sendRequest = (creatorId) => {
+    setShowLoader(true);
+    const cTime = moment().utc().format('YYYY-MM-DD HH:mm:ss');
+    const data = {
+      inviteeId: creatorId,
+      callTime: cTime,
+      status: 0, // 0 means request
+    };
+    if (currentUser) {
+      currentUser
+        .getIdToken()
+        .then((token) => {
+          postVideoCallRequest(token, data)
+            .then((res) => {
+              setShowLoader(false);
+              notify('Sent the request successfully', 'success');
+              console.log(`video call req ${res}`);
+            })
+            .catch((error) => {
+              setShowLoader(false);
+              notify('Oops! something went wrong. Try again', 'danger');
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      setShowLoader(false);
+      setShowLogin(true);
+    }
   };
 
   const loadFamousCard = (item, index) => {
@@ -224,7 +258,7 @@ const Home = () => {
         key={index}
         data={item}
         pos={index}
-        showLogin={() => setShowLogin(true)}
+        sendRequest={sendRequest}
       />
     );
   };
@@ -474,6 +508,7 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
+        {console.log(`cs ${currentUser}`)}
         {(currentUser && ((videoRequest && videoRequest.length > 0)
           || (videoRequestSent && videoRequestSent.length > 0))) && (
           <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">

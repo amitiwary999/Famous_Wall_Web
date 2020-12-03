@@ -8,6 +8,8 @@ import {
   Switch,
 } from 'react-router-dom';
 import axios from 'axios';
+import ReactNotification from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
 import { AuthProvider } from './firebase/Auth';
 
 const Home = lazy(() => import('./view/home/home'));
@@ -37,6 +39,7 @@ function App() {
   return (
     <AuthProvider>
       <div className="App">
+        <ReactNotification />
         <Suspense fallback={<div />}>
           <Router>
             <Route
