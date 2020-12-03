@@ -265,7 +265,7 @@ const Home = () => {
                     Logout
                   </p>
                 )}
-                {videoRequest && videoRequest.length > 0 && (
+                {currentUser && videoRequest && videoRequest.length > 0 && (
                   <UncontrolledDropdown className="d-md-none">
                     <DropdownToggle
                       tag="small"
@@ -474,8 +474,8 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
-        {((videoRequest && videoRequest.length > 0)
-          || (videoRequestSent && videoRequestSent.length > 0)) && (
+        {(currentUser && ((videoRequest && videoRequest.length > 0)
+          || (videoRequestSent && videoRequestSent.length > 0))) && (
           <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
             <Card>
               <p className="m-1" style={{ fontWeight: 'bold' }}>

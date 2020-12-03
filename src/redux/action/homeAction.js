@@ -4,11 +4,12 @@ import firebase from '../../firebase/Firebase';
 export const fetchFamousPosts = (lastItemId, token) => (dispatch) => {
   dispatch({ type: 'LOAD_NEW_POSTS_PENDING' });
   if (token) axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const data = {
+  const requestData = {
     nextKey: lastItemId,
     limit: 20,
   };
-  axios.post('getBlogSql', data).then((res) => {
+  const requestBody = { params: requestData };
+  axios.get('famousPost', requestBody).then((res) => {
     // console.log("res "+JSON.stringify(res.data))
     if (res && res.data) {
       dispatch({ type: 'LOAD_NEW_POSTS_SUCCESS' });
@@ -52,7 +53,6 @@ export const likeOrUnlikePost = (famousUserId, incr, pos, token) => (dispatch) =
 
 // received
 export const fetchVideoRequest = (token) => new Promise((resolve, reject) => {
-  console.log(`token invite ${token}`);
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   axios
     .get('receivedRequest')
