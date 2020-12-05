@@ -8,7 +8,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import {
   Card, Badge, Col, CardBody, Button, UncontrolledDropdown, DropdownToggle,
-  DropdownMenu, Row, TabContent, TabPane, Nav, NavItem, NavLink,
+  DropdownMenu, Row, TabContent, TabPane, Nav, NavItem, NavLink, Navbar, NavbarToggler, Collapse,
 } from 'reactstrap';
 import { Video, Image, Music } from 'react-feather';
 import Dropzone from 'react-dropzone';
@@ -20,7 +20,7 @@ import { useHistory } from 'react-router-dom';
 import FamousCardView from './FamousCardView';
 import UploadMedia from './UploadMedia';
 import {
-  VIDEO_MEDIA, IMAGE_MEDIA, PENDING, SUCCESS, FAILURE, notify
+  VIDEO_MEDIA, IMAGE_MEDIA, PENDING, SUCCESS, FAILURE, notify,
 } from '../../common/util';
 import {
   fetchFamousPosts, fetchVideoInvite, fetchVideoRequest, postVideoCallRequest, deleteVideoCallRequest,
@@ -58,6 +58,9 @@ const Home = () => {
   const [videoRequestIndex, setVideoRequestIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('1');
   const [active, setActive] = useState('1');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleNav = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
   const getVideoRequest = (token) => {
@@ -289,124 +292,132 @@ const Home = () => {
 
   return (
     <div>
-      <Row>
+      <Navbar className="bg-dark navbar-dark sticky-top" expand="md">
+        <NavbarToggler onClick={toggleNav} />
+        <Collapse isOpen={isOpen} navbar>
+          <Nav className="mr-auto" navbar>
+            <NavItem>
+              <NavLink href="/">Home</NavLink>
+            </NavItem>
+            <NavItem style={{ display: currentUser ? 'block' : 'none' }}>
+              <NavLink href="/">Profile</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                style={{ display: currentUser ? 'block' : 'none', cursor: 'pointer' }}
+                onClick={() => logout()}
+              >
+                Logout
+              </NavLink>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Navbar>
+      <Row style={{ marginTop: '48px' }}>
         <Col md={4} sm={6} className="mx-auto mt-2">
           <Card>
             <CardBody>
-              <Row>
-                {currentUser && (
-                  <p onClick={() => logout()} style={{ cursor: 'pointer' }}>
-                    Logout
-                  </p>
-                )}
-                {currentUser && videoRequest && videoRequest.length > 0 && (
-                  <UncontrolledDropdown className="d-md-none">
-                    <DropdownToggle
-                      tag="small"
-                      className="text-bold-500 cursor-pointer"
+              {currentUser && videoRequest && videoRequest.length > 0 && (
+                <UncontrolledDropdown className="d-md-none">
+                  <DropdownToggle
+                    tag="small"
+                    className="text-bold-500 cursor-pointer"
+                  >
+                    <div className="d-flex justify-content-end mb-2">
+                      <Badge color="success" className=" mr-1 mb-1">
+                        {videoRequest && videoRequest.length > 0 && (
+                          <Badge
+                            pill
+                            color="danger"
+                            className="p-1 badge-up float-right"
+                            style={{
+                              marginRight: -8,
+                              marginTop: -6,
+                              fontSize: '12px',
+                            }}
+                          >
+                            {videoRequest.length}
+                          </Badge>
+                        )}
+                        <Col className="p-2" style={{ cursor: 'pointer' }}>
+                          <Video size={16} />
+                          <span className="font-weight-bold ml-1">
+                            Call request
+                          </span>
+                        </Col>
+                      </Badge>
+                    </div>
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <PerfectScrollbar
+                      options={{
+                        wheelPropagation: false,
+                      }}
                     >
-                      <div className="d-flex justify-content-end mb-2">
-                        <Badge color="success" className=" mr-1 mb-1">
-                          {videoRequest && videoRequest.length > 0 && (
-                            <Badge
-                              pill
-                              color="danger"
-                              className="p-1 badge-up float-right"
-                              style={{
-                                marginRight: -8,
-                                marginTop: -6,
-                                fontSize: '12px',
-                              }}
-                            >
-                              {videoRequest.length}
-                            </Badge>
-                          )}
-                          <Col className="p-2" style={{ cursor: 'pointer' }}>
-                            <Video size={16} />
-                            <span className="font-weight-bold ml-1">
-                              Call request
-                            </span>
-                          </Col>
-                        </Badge>
-                      </div>
-                    </DropdownToggle>
-                    <DropdownMenu>
-                      <PerfectScrollbar
-                        options={{
-                          wheelPropagation: false,
-                        }}
-                      >
-                        <div style={{ width: '35vh' }}>
-                          <p className="m-1" style={{ fontWeight: 'bold' }}>
-                            Video Call Request
-                          </p>
+                      <div style={{ width: '35vh' }}>
+                        <p className="m-1" style={{ fontWeight: 'bold' }}>
+                          Video Call Request
+                        </p>
 
-                          <TabContent activeTab={activeTab}>
-                            <TabPane tabId="1">
-                              <Nav
-                                className="justify-content-center"
-                                style={{ borderBottomColor: 'white' }}
-                                tabs
-                              >
-                                <NavItem className="d-inline-block">
-                                  <NavLink
-                                    className={classnames({
-                                      active: active === '1',
-                                    })}
-                                    onClick={() => {
-                                      toggle('1');
-                                    }}
-                                  >
-                                    <p
-                                      className="m-0"
-                                      style={{ color: 'white' }}
-                                    >
-                                      Received
-                                    </p>
-                                  </NavLink>
-                                </NavItem>
-                                <NavItem className="d-inline-block">
-                                  <NavLink
-                                    className={classnames({
-                                      active: active === '2',
-                                    })}
-                                    onClick={() => {
-                                      toggle('2');
-                                    }}
-                                  >
-                                    <p
-                                      className="m-0"
-                                      style={{ color: 'white' }}
-                                    >
-                                      Sent
-                                    </p>
-                                  </NavLink>
-                                </NavItem>
-                              </Nav>
-                              <TabContent className="py-50" activeTab={active}>
-                                <TabPane tabId="1">
-                                  <VideoRequestLists
-                                    updateRequest={acceptRejectRequest}
-                                    videoRequests={videoRequest}
-                                    type={0}
-                                  />
-                                </TabPane>
-                                <TabPane tabId="2">
-                                  <VideoRequestLists
-                                    updateRequest={acceptRejectRequest}
-                                    videoRequests={videoRequestSent}
-                                    type={1}
-                                  />
-                                </TabPane>
-                              </TabContent>
-                            </TabPane>
-                          </TabContent>
-                        </div>
-                      </PerfectScrollbar>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                )}
-              </Row>
+                        <TabContent activeTab={activeTab}>
+                          <TabPane tabId="1">
+                            <Nav
+                              className="justify-content-center"
+                              style={{ borderBottomColor: 'white' }}
+                              tabs
+                            >
+                              <NavItem className="d-inline-block">
+                                <NavLink
+                                  className={classnames({
+                                    active: active === '1',
+                                  })}
+                                  onClick={() => {
+                                    toggle('1');
+                                  }}
+                                >
+                                  <p className="m-0" style={{ color: 'white' }}>
+                                    Received
+                                  </p>
+                                </NavLink>
+                              </NavItem>
+                              <NavItem className="d-inline-block">
+                                <NavLink
+                                  className={classnames({
+                                    active: active === '2',
+                                  })}
+                                  onClick={() => {
+                                    toggle('2');
+                                  }}
+                                >
+                                  <p className="m-0" style={{ color: 'white' }}>
+                                    Sent
+                                  </p>
+                                </NavLink>
+                              </NavItem>
+                            </Nav>
+                            <TabContent className="py-50" activeTab={active}>
+                              <TabPane tabId="1">
+                                <VideoRequestLists
+                                  updateRequest={acceptRejectRequest}
+                                  videoRequests={videoRequest}
+                                  type={0}
+                                />
+                              </TabPane>
+                              <TabPane tabId="2">
+                                <VideoRequestLists
+                                  updateRequest={acceptRejectRequest}
+                                  videoRequests={videoRequestSent}
+                                  type={1}
+                                />
+                              </TabPane>
+                            </TabContent>
+                          </TabPane>
+                        </TabContent>
+                      </div>
+                    </PerfectScrollbar>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              )}
               <p className="font-weight-bold">Make yourself famous</p>
               {currentUser && (
                 <div className="d-flex justify-content-between pl-2 pr-2">
@@ -509,72 +520,73 @@ const Home = () => {
           </div>
         </Col>
         {console.log(`cs ${currentUser}`)}
-        {(currentUser && ((videoRequest && videoRequest.length > 0)
-          || (videoRequestSent && videoRequestSent.length > 0))) && (
-          <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
-            <Card>
-              <p className="m-1" style={{ fontWeight: 'bold' }}>
-                Video Call Request
-              </p>
-              <CardBody>
-                <TabContent activeTab={activeTab}>
-                  <TabPane tabId="1">
-                    <Nav
-                      className="justify-content-center"
-                      style={{ borderBottomColor: 'white' }}
-                      tabs
-                    >
-                      <NavItem className="d-inline-block">
-                        <NavLink
-                          className={classnames({
-                            active: active === '1',
-                          })}
-                          onClick={() => {
-                            toggle('1');
-                          }}
-                        >
-                          <p className="m-0" style={{ color: 'white' }}>
-                            Received
-                          </p>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem className="d-inline-block">
-                        <NavLink
-                          className={classnames({
-                            active: active === '2',
-                          })}
-                          onClick={() => {
-                            toggle('2');
-                          }}
-                        >
-                          <p className="m-0" style={{ color: 'white' }}>
-                            Sent
-                          </p>
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                    <TabContent className="py-50" activeTab={active}>
-                      <TabPane tabId="1">
-                        <VideoRequestLists
-                          updateRequest={acceptRejectRequest}
-                          type={0}
-                          videoRequests={videoRequest}
-                        />
-                      </TabPane>
-                      <TabPane tabId="2">
-                        <VideoRequestLists
-                          joinCallRequest={joinCallRequest}
-                          deleteRequest={deleteCallRequest}
-                          type={1}
-                          videoRequests={videoRequestSent}
-                        />
-                      </TabPane>
-                    </TabContent>
-                  </TabPane>
-                </TabContent>
-              </CardBody>
-            </Card>
-          </Col>
+        {currentUser
+          && ((videoRequest && videoRequest.length > 0)
+            || (videoRequestSent && videoRequestSent.length > 0)) && (
+            <Col md={5} lg={4} xl={3} className="d-none d-md-block float-right">
+              <Card>
+                <p className="m-1" style={{ fontWeight: 'bold' }}>
+                  Video Call Request
+                </p>
+                <CardBody>
+                  <TabContent activeTab={activeTab}>
+                    <TabPane tabId="1">
+                      <Nav
+                        className="justify-content-center"
+                        style={{ borderBottomColor: 'white' }}
+                        tabs
+                      >
+                        <NavItem className="d-inline-block">
+                          <NavLink
+                            className={classnames({
+                              active: active === '1',
+                            })}
+                            onClick={() => {
+                              toggle('1');
+                            }}
+                          >
+                            <p className="m-0" style={{ color: 'white' }}>
+                              Received
+                            </p>
+                          </NavLink>
+                        </NavItem>
+                        <NavItem className="d-inline-block">
+                          <NavLink
+                            className={classnames({
+                              active: active === '2',
+                            })}
+                            onClick={() => {
+                              toggle('2');
+                            }}
+                          >
+                            <p className="m-0" style={{ color: 'white' }}>
+                              Sent
+                            </p>
+                          </NavLink>
+                        </NavItem>
+                      </Nav>
+                      <TabContent className="py-50" activeTab={active}>
+                        <TabPane tabId="1">
+                          <VideoRequestLists
+                            updateRequest={acceptRejectRequest}
+                            type={0}
+                            videoRequests={videoRequest}
+                          />
+                        </TabPane>
+                        <TabPane tabId="2">
+                          <VideoRequestLists
+                            joinCallRequest={joinCallRequest}
+                            deleteRequest={deleteCallRequest}
+                            type={1}
+                            videoRequests={videoRequestSent}
+                          />
+                        </TabPane>
+                      </TabContent>
+                    </TabPane>
+                  </TabContent>
+                </CardBody>
+              </Card>
+            </Col>
         )}
       </Row>
       {showSelectedMediaCard && (
