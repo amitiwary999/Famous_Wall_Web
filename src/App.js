@@ -15,6 +15,7 @@ import { AuthProvider } from './firebase/Auth';
 const Home = lazy(() => import('./view/home/home'));
 const Login = lazy(() => import('./view/login/Login'));
 const videoCall = lazy(() => import('./view/VideoCall/VideoCallView'));
+const profile = lazy(() => import('./view/profile/Profle'));
 
 function App() {
   axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -34,6 +35,11 @@ function App() {
       pageLink: '/videocall',
       view: videoCall,
       displayName: 'VideoCall',
+    },
+    {
+      pageLink: '/profile/:id',
+      view: profile,
+      displayName: 'Profile',
     },
   ];
   return (
