@@ -33,18 +33,20 @@ import SetVideoCallTime from './SetVideoCallTime';
 import VideoRequestLists from './VideoRequestList/VideoRequestLists';
 import firebase from '../../firebase/Firebase';
 import './home.scss';
+import { fetchSelfProfile } from '../../redux/action/ProfileAction';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
   const history = useHistory();
 
   const {
-    famousPosts, lastItemId, hasMoreItems, loadItemStatus,
+    famousPosts, lastItemId, hasMoreItems, loadItemStatus, selfProfile,
   } = useSelector((state) => ({
     famousPosts: state.home.famousPosts,
     lastItemId: state.home.lastItemId,
     hasMoreItems: state.home.hasMoreItems,
     loadItemStatus: state.home.loadItemStatus,
+    selfProfile: state.selfProfile.selfProfile,
   }));
   const [selectedMediaType, setSelectedMediaType] = useState('');
   const [selectedMediaFile, setSelectedMediaFile] = useState('');
@@ -92,6 +94,7 @@ const Home = () => {
   useEffect(() => {
     if (currentUser) {
       currentUser.getIdToken().then((token) => {
+        dispatch(fetchSelfProfile(token));
         dispatch(fetchFamousPosts(lastItemId, token));
         getVideoRequest(token);
         getVideoInvite(token);
@@ -290,6 +293,12 @@ const Home = () => {
       });
   };
 
+  const openSelfProfile = () => {
+    if (selfProfile && selfProfile.profileId) {
+      history.push(`/profile/${selfProfile.profileId}`);
+    }
+  };
+
   return (
     <div>
       <Navbar className="bg-dark navbar-dark sticky-top" expand="md">
@@ -300,7 +309,12 @@ const Home = () => {
               <NavLink href="/">Home</NavLink>
             </NavItem>
             <NavItem style={{ display: currentUser ? 'block' : 'none' }}>
-              <NavLink href="/">Profile</NavLink>
+              <NavLink
+                style={{ display: currentUser ? 'block' : 'none', cursor: 'pointer' }}
+                onClick={() => openSelfProfile()}
+              >
+                Profile
+              </NavLink>
             </NavItem>
             <NavItem>
               <NavLink
@@ -519,7 +533,6 @@ const Home = () => {
             {/* </InfiniteScroll> */}
           </div>
         </Col>
-        {console.log(`cs ${currentUser}`)}
         {currentUser
           && ((videoRequest && videoRequest.length > 0)
             || (videoRequestSent && videoRequestSent.length > 0)) && (

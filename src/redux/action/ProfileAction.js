@@ -15,3 +15,19 @@ export const fetchProfile = (data) => new Promise((resolve, reject) => {
       reject(error);
     });
 });
+
+export const fetchSelfProfile = (token) => (dispatch) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios.get('profile')
+    .then((res) => {
+      if (res && res.data) {
+        dispatch({ type: 'FETCH_SELF_PROFILE_SUCCESS', payload: res.data });
+      } else {
+        dispatch({ type: 'FETCH_SELF_PROFILE_FAILED' });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      dispatch({ type: 'FETCH_SELF_PROFILE_FAILED' });
+    });
+};
