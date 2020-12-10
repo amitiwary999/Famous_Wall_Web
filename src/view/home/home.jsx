@@ -295,7 +295,7 @@ const Home = () => {
 
   const openSelfProfile = () => {
     if (selfProfile && selfProfile.profileId) {
-      history.push(`/profile/${selfProfile.profileId}`);
+      history.replace(`/profile/${selfProfile.profileId}`);
     }
   };
 
