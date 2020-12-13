@@ -1,12 +1,17 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Button, Card, CardBody, Col, Row,
 } from 'reactstrap';
-import { fetchProfile } from '../../redux/action/ProfileAction';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProfile, fetchSelfProfile } from '../../redux/action/ProfileAction';
+import { AuthContext } from '../../firebase/Auth';
 
 const Profile = () => {
+  const { currentUser } = useContext(AuthContext);
+  const dispatch = useDispatch();
+
   const location = useLocation();
   const pathName = location.pathname;
   const pathSplit = pathName.split('/');
@@ -14,15 +19,31 @@ const Profile = () => {
 
   const [userProfile, setUserProfile] = useState({});
 
+  const { selfProfile } = useSelector((state) => ({
+    selfProfile: state.selfProfile.selfProfile,
+  }));
+
+  useEffect(() => {
+    setUserProfile(selfProfile);
+  }, [selfProfile]);
+
   const fetchUserProfile = () => {
     const data = { profileId };
-    fetchProfile(data)
-      .then((res) => {
-        setUserProfile(res);
-      })
-      .catch((error) => {
+    if (currentUser) {
+      currentUser.getIdToken().then((token) => {
+        dispatch(fetchSelfProfile(token));
+      }).catch((error) => {
         console.error(error);
       });
+    } else {
+      fetchProfile(data)
+        .then((res) => {
+          setUserProfile(res);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   useEffect(() => {
@@ -39,10 +60,12 @@ const Profile = () => {
               alt={userProfile.userName}
               style={{ width: '144px', height: '144px', borderRadius: '50%' }}
             />
+
             <div>
               <p>{userProfile.userName}</p>
-              <Button>Request Call</Button>
+              {!userProfile.selfProfile && (<Button>Request Call</Button>)}
             </div>
+
           </CardBody>
         </Card>
         <Card className="mt-2">
