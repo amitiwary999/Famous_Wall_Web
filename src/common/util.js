@@ -52,3 +52,29 @@ export const notify = (msg, type, title = '') => {
     },
   });
 };
+
+export const uploadMedia = (selectedMediaFile, mediaType) => new Promise((resolve, reject) => {
+  const time = new Date().getTime();
+  console.log(selectedMediaFile);
+  const storage = firebase.storage();
+  const uploadTask = storage.ref(`${mediaType}/${time + selectedMediaFile.name}`).put(selectedMediaFile);
+  uploadTask.on(
+    'state_changed',
+    (snapshot) => { },
+    (error) => {
+      reject(error);
+    },
+    () => {
+      storage
+        .ref(mediaType)
+        .child(time + selectedMediaFile.name)
+        .getDownloadURL()
+        .then((url) => {
+          resolve(url);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    },
+  );
+});

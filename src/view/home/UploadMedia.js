@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
@@ -7,17 +8,15 @@ import {
 } from 'reactstrap';
 import axios from 'axios';
 import {
-  IMAGE_MEDIA, VIDEO_MEDIA, authToken, getHash,
+  IMAGE_MEDIA, VIDEO_MEDIA, getHash, uploadMedia,
 } from '../../common/util';
-import firebase from '../../firebase/Firebase';
 import { AuthContext } from '../../firebase/Auth';
 
 const UploadMedia = (props) => {
   const { currentUser } = useContext(AuthContext);
-  const [mediaType, setMediaType] = useState(props.mediaType ? props.mediaType : IMAGE_MEDIA);
+  const mediaType = props.mediaType ? props.mediaType : IMAGE_MEDIA;
   const [postText, setPostText] = useState('');
   const selectedMediaFile = props.file;
-  const [mediaUrl, setMediaUrl] = useState('');
   const [loader, setLoader] = useState(false);
   const [loadMedia, setLoadMedia] = useState(false);
   const [mediaSrc, setMediaSrc] = useState('');
@@ -87,33 +86,15 @@ const UploadMedia = (props) => {
 
   const uploadTask = () => {
     setLoader(true);
-    const time = new Date().getTime();
-    console.log(selectedMediaFile);
-    const storage = firebase.storage();
-    const uploadTask = storage.ref(`${mediaType}/${time + selectedMediaFile.name}`).put(selectedMediaFile);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => { },
-      (error) => {
+    uploadMedia(selectedMediaFile, mediaType)
+      .then((url) => {
+        sendPost(url);
+      })
+      .catch((error) => {
+        props.closeSelectedMedia();
         console.log(error);
         setLoader(false);
-      },
-      () => {
-        storage
-          .ref(mediaType)
-          .child(time + selectedMediaFile.name)
-          .getDownloadURL()
-          .then((url) => {
-            console.log(url);
-            sendPost(url);
-          })
-          .catch((err) => {
-            props.closeSelectedMedia();
-            console.log(err);
-            setLoader(false);
-          });
-      },
-    );
+      });
   };
 
   return (
@@ -124,7 +105,7 @@ const UploadMedia = (props) => {
       <ModalBody>
         <Row>
           <Col md={6} className="text-center">
-            {(mediaType == VIDEO_MEDIA) && (
+            {(mediaType === VIDEO_MEDIA) && (
               <video
                 style={{ maxWidth: '460px', height: 'auto' }}
                 src={mediaSrc}
@@ -136,14 +117,14 @@ const UploadMedia = (props) => {
             {(mediaType === IMAGE_MEDIA) && (
               <img
                 src={mediaSrc}
+                alt="loading"
                 style={{ maxWidth: '460px', height: 'auto' }}
               />
             )}
             <input
-              className="mx-8 my-4"
+              className="mx-8 my-4 font-weight-bold"
               value={postText}
               placeholder="your one liner"
-              className="font-weight-bold"
               onChange={(event) => updatePostText(event)}
             />
             <Button

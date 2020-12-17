@@ -1,12 +1,17 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
-  Button, Card, CardBody, Col, Row,
+  Button, Card, CardBody, Col, Row, Spinner,
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { Edit } from 'react-feather';
+import Dropzone from 'react-dropzone';
 import { fetchProfile, fetchSelfProfile } from '../../redux/action/ProfileAction';
 import { AuthContext } from '../../firebase/Auth';
+import { IMAGE_MEDIA, notify, uploadMedia } from '../../common/util';
+import './profile.scss';
 
 const Profile = () => {
   const { currentUser } = useContext(AuthContext);
@@ -16,6 +21,7 @@ const Profile = () => {
   const pathName = location.pathname;
   const pathSplit = pathName.split('/');
   const profileId = pathSplit[2];
+  const [imageLoader, showImageLoader] = useState(false);
 
   const [userProfile, setUserProfile] = useState({});
 
@@ -50,17 +56,65 @@ const Profile = () => {
     fetchUserProfile();
   }, []);
 
+  const uploadDp = (mediaFile) => {
+    showImageLoader(true);
+    uploadMedia(mediaFile, IMAGE_MEDIA)
+      .then((url) => {
+        setUserProfile((selfProfilePrevState) => ({
+          ...selfProfilePrevState,
+          userDp: url,
+        }));
+        showImageLoader(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        showImageLoader(false);
+        notify('Oops! Something went wrong', 'danger', 'Error');
+      });
+  };
+
   return (
     <div>
       <Col className="mx-auto" md={5}>
         <Card>
           <CardBody>
-            <img
-              src={userProfile.userDp}
-              alt={userProfile.userName}
-              style={{ width: '144px', height: '144px', borderRadius: '50%' }}
-            />
+            <div>
+              <div style={{ position: 'relative' }}>
+                <img
+                  src={userProfile.userDp}
+                  alt={userProfile.userName}
+                  style={{ width: '144px', height: '144px', borderRadius: '50%' }}
+                />
+                {imageLoader && (
+                <div className="overlay">
+                  <Spinner />
+                </div>
+                )}
+              </div>
 
+              <div style={{ left: '55%', bottom: '25%', position: 'absolute' }}>
+                <Dropzone
+                  accept="image/*"
+                  onDrop={(acceptedFiles) => {
+                    console.log(acceptedFiles);
+                    uploadDp(acceptedFiles[0]);
+                  }}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <section>
+                      <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        <Edit style={{
+                          width: '24px', height: '24px', cursor: 'pointer',
+                        }}
+                        />
+                      </div>
+                    </section>
+                  )}
+
+                </Dropzone>
+              </div>
+            </div>
             <div>
               <p>{userProfile.userName}</p>
               {!userProfile.selfProfile && (<Button>Request Call</Button>)}
