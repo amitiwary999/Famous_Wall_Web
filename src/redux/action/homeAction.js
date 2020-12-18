@@ -2,6 +2,7 @@ import axios from 'axios';
 import firebase from '../../firebase/Firebase';
 
 export const fetchFamousPosts = (lastItemId, token) => (dispatch) => {
+  console.log("tken "+token);
   dispatch({ type: 'LOAD_NEW_POSTS_PENDING' });
   if (token) axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   const requestData = {
@@ -30,12 +31,12 @@ export const fetchFamousPosts = (lastItemId, token) => (dispatch) => {
   });
 };
 
-export const likeOrUnlikePost = (famousUserId, incr, pos, token) => (dispatch) => {
-  dispatch({ type: 'POST_LIKE_SUCCESS', payload: { userId: famousUserId, pos } });
+export const likeOrUnlikePost = (postId, incr, pos, token) => (dispatch) => {
+  dispatch({ type: 'POST_LIKE_SUCCESS', payload: { postId, pos } });
 
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   const data = {
-    userId: famousUserId,
+    postId,
     increment: incr,
   };
 
@@ -43,11 +44,11 @@ export const likeOrUnlikePost = (famousUserId, incr, pos, token) => (dispatch) =
     if (res && res.data) {
 
     } else {
-      dispatch({ type: 'POST_LIKE_FAILED', payload: { userId: famousUserId, pos } });
+      dispatch({ type: 'POST_LIKE_FAILED', payload: { postId, pos } });
     }
   }).catch((error) => {
     console.log(`error ${error} ${JSON.stringify(error.response)}`);
-    dispatch({ type: 'POST_LIKE_FAILED', payload: { userId: famousUserId, pos } });
+    dispatch({ type: 'POST_LIKE_FAILED', payload: { postId, pos } });
   });
 };
 

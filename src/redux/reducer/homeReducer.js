@@ -33,24 +33,25 @@ export const homeReducer = (state = INITIAL_STATE, action) => {
 
     case 'POST_LIKE_FAILED':
       const { pos } = payload;
-      const { userId } = payload;
+      const { postId } = payload;
       const item = state.famousPosts[pos];
-      if (item && userId && item.creatorId == userId) {
+      if (item && postId && item.creatorId === postId) {
         item.isLiked = 0;
         const updatedPosts = [...state.famousPosts.slice(0, pos), item, ...state.famousPosts.slice(pos + 1)];
         return { ...state, famousPosts: updatedPosts };
       }
       return state;
 
-    case 'POST_LIKE_SUCCESS':
+    case 'POST_LIKE_SUCCESS': {
       const position = payload.pos;
-      const likeUserId = payload.userId;
+      const likePostId = payload.postId;
       const likeItem = state.famousPosts[position];
-      if (likeItem && likeUserId && likeItem.creatorId == likeUserId) {
-        likeItem.isLiked = likeItem.isLiked == 0 ? 1 : 0;
+      if (likeItem && likePostId && likeItem.postId === likePostId) {
+        likeItem.isLiked = likeItem.isLiked === 0 ? 1 : 0;
         const updatedPosts = [...state.famousPosts.slice(0, position), likeItem, ...state.famousPosts.slice(position + 1)];
         return { ...state, famousPosts: updatedPosts };
       }
+    }
       return state;
 
     default:
