@@ -31,3 +31,25 @@ export const fetchSelfProfile = (token) => (dispatch) => {
       dispatch({ type: 'FETCH_SELF_PROFILE_FAILED' });
     });
 };
+
+export const addUserProfile = (token, data) => new Promise((resolve, reject) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios.post('profile', data)
+    .then((res) => {
+      resolve('success');
+    })
+    .catch((error) => {
+      reject(error);
+    });
+});
+
+export const updateProfile = (token, data) => new Promise((resolve, reject) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios.patch('profile', data)
+    .then((res) => {
+      resolve('success');
+    })
+    .catch((error) => {
+      reject(error);
+    });
+});

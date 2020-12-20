@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Col, Card, Input, Button, Modal, ModalBody,
 } from 'reactstrap';
-import { FAILURE, PENDING, SUCCESS } from '../../common/util';
+import {
+  FAILURE, PENDING, SUCCESS, generateProfileId,
+} from '../../common/util';
 import firebase from '../../firebase/Firebase';
 import logo from '../../img/unicoon.png';
-import { setUser } from '../../redux/action/loginAction';
 import Spinner from '../../firebase/LoadingSpinner';
+import { addUserProfile } from '../../redux/action/ProfileAction';
 
 const Login = (props) => {
   const [email, setEmail] = useState('');
@@ -72,18 +74,33 @@ const Login = (props) => {
       });
   };
 
+  const addProfile = (token, data) => {
+    setLoader(true);
+    addUserProfile(token, data)
+      .then(() => {
+        setLoader(false);
+        props.closeLogin();
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoader(false);
+      });
+  };
+
   const sendUserInfo = (firebaseUser) => {
     firebaseUser.getIdToken().then((token) => {
       const { email } = firebaseUser;
       const photo = firebaseUser.photoURL;
       const fullName = firebaseUser.displayName;
+      const profileId = generateProfileId(email);
       const data = {
         name: fullName,
         dp: photo,
         email,
+        profileId,
       };
 
-      dispatch(setUser(token, data));
+      addProfile(token, data);
     }).catch((error) => {
       console.log(error);
       logoutUser();

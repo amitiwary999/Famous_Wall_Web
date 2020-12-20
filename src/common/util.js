@@ -78,3 +78,5 @@ export const uploadMedia = (selectedMediaFile, mediaType) => new Promise((resolv
     },
   );
 });
+
+export const generateProfileId = (emailId) => emailId.toLowerCase().split('@')[0] + new Date().getTime();

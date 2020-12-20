@@ -11,7 +11,8 @@ import { CheckCircle, Edit, X } from 'react-feather';
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 import dompurify from 'dompurify';
-import { fetchProfile, fetchSelfProfile } from '../../redux/action/ProfileAction';
+import useFormless from 'react-useformless';
+import { fetchProfile, fetchSelfProfile, updateProfile } from '../../redux/action/ProfileAction';
 import { AuthContext } from '../../firebase/Auth';
 import { IMAGE_MEDIA, notify, uploadMedia } from '../../common/util';
 import './profile.scss';
@@ -27,17 +28,23 @@ const Profile = () => {
   const profileId = pathSplit[2];
   const [imageLoader, showImageLoader] = useState(false);
   const [editAbout, setEditAbout] = useState(false);
-  const [userProfile, setUserProfile] = useState({ userBio: RichTextEditor.createEmptyValue() });
+  const [userProfile, setUserProfile] = useState({ });
 
   const { selfProfile } = useSelector((state) => ({
     selfProfile: state.selfProfile.selfProfile,
   }));
 
+  const initialValues = { userBio: RichTextEditor.createEmptyValue() };
+  const {
+    values, errors, setValue, inputProps,
+  } = useFormless({
+    initialValues,
+  });
+
   useEffect(() => {
     if (selfProfile.userBio) {
-      selfProfile.userBio = RichTextEditor.createValueFromString(selfProfile.userBio, 'html');
+      setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
     }
-    console.log(`userProfile ${JSON.stringify(selfProfile)}`);
 
     setUserProfile(selfProfile);
   }, [selfProfile]);
@@ -69,11 +76,7 @@ const Profile = () => {
     showImageLoader(true);
     uploadMedia(mediaFile, IMAGE_MEDIA)
       .then((url) => {
-        setUserProfile((selfProfilePrevState) => ({
-          ...selfProfilePrevState,
-          userDp: url,
-        }));
-        showImageLoader(false);
+        saveProfileDp(url);
       })
       .catch((error) => {
         console.error(error);
@@ -83,18 +86,45 @@ const Profile = () => {
   };
 
   const onAboutChange = (value) => {
-    setUserProfile((selfProfilePrevState) => ({
-      ...selfProfilePrevState,
-      userBio: RichTextEditor.createValueFromString(value, 'html'),
-    }));
+    setValue('userBio', RichTextEditor.createValueFromString(value, 'html'));
   };
 
   const saveAbout = () => {
+    if (values.userBio.toString('html')) {
+      const data = userProfile;
+      data.userBio = values.userBio.toString('html');
 
+      currentUser.getIdToken().then((token) => {
+        updateProfile(token, data)
+          .then((res) => {
+            setUserProfile(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+    }
+  };
+
+  const saveProfileDp = (dp) => {
+    const data = userProfile;
+    data.userDp = dp;
+    currentUser.getIdToken().then((token) => {
+      updateProfile(token, data)
+        .then((res) => {
+          setUserProfile(data);
+          showImageLoader(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          showImageLoader(false);
+        });
+    });
   };
 
   return (
     <div>
+
       <Col className="mx-auto" md={5}>
         <Card>
           <CardBody>
@@ -151,18 +181,17 @@ const Profile = () => {
                 </div>
                 <div className="col float-left">
                   {!editAbout ? (
-                    <p className="float-left">
-                      {' '}
-                      dangerouslySetInnerHTML=
-                      {{
+                    <p
+                      className="float-left"
+                      dangerouslySetInnerHTML={{
                         __html: sanitizer(
                           userProfile.userBio,
                         ),
                       }}
-                    </p>
+                    />
                   ) : (
                     <div>
-                      <RichTextEditor value={userProfile.userBio} onChange={onAboutChange} />
+                      <RichTextEditor value={values.userBio} onChange={onAboutChange} />
                       <div className="float-right">
                         <button
                           onClick={saveAbout}
@@ -172,10 +201,7 @@ const Profile = () => {
                         </button>
                         <button
                           onClick={() => {
-                            setUserProfile((selfProfilePrevState) => ({
-                              ...selfProfilePrevState,
-                              userBio: RichTextEditor.createValueFromString(selfProfile.userBio, 'html'),
-                            }));
+                            setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
                             setEditAbout(false);
                           }}
                           className="btn btn-danger btn-sm mb-2 mt-1"
