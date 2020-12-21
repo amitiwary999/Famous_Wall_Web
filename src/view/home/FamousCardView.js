@@ -35,6 +35,7 @@ const FamousCardView = (props) => {
   const { isLiked } = data;
   const { creatorId } = data;
   const { postId } = data;
+  const { profileId } = data;
   const { pos } = props;
   const dispatch = useDispatch();
 
@@ -59,6 +60,10 @@ const FamousCardView = (props) => {
     props.sendRequest(creatorId);
   };
 
+  const showProfile = () => {
+    props.showProfile(profileId);
+  };
+
   return (
     <div className="my-2">
       {/* {console.log("data in card " + JSON.stringify(props))} */}
@@ -66,7 +71,7 @@ const FamousCardView = (props) => {
         <Card>
           <CardBody className="mx-sm-auto">
             <Col style={{ height: 'auto', maxWidth: '460px' }}>
-              <div className="row ml-3 mt-2">
+              <div className="row ml-3 mt-2" style={{ cursor: 'pointer' }} onClick={showProfile}>
                 <img
                   src={userDp}
                   alt={userName}

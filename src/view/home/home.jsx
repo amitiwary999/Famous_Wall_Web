@@ -257,6 +257,10 @@ const Home = () => {
     }
   };
 
+  const showUserProfile = (profileId) => {
+    history.replace(`/profile/${profileId}`);
+  };
+
   const loadFamousCard = (item, index) => {
     console.log(`item ${item.mimeType}`);
     return (
@@ -264,6 +268,7 @@ const Home = () => {
         key={index}
         data={item}
         pos={index}
+        showProfile={showUserProfile}
         sendRequest={sendRequest}
       />
     );

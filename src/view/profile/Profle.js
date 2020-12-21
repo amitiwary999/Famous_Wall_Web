@@ -12,10 +12,13 @@ import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 import dompurify from 'dompurify';
 import useFormless from 'react-useformless';
+import moment from 'moment';
 import { fetchProfile, fetchSelfProfile, updateProfile } from '../../redux/action/ProfileAction';
 import { AuthContext } from '../../firebase/Auth';
 import { IMAGE_MEDIA, notify, uploadMedia } from '../../common/util';
 import './profile.scss';
+import { postVideoCallRequest } from '../../redux/action/homeAction';
+import Login from '../login/Login';
 
 const Profile = () => {
   const { currentUser } = useContext(AuthContext);
@@ -26,6 +29,8 @@ const Profile = () => {
   const pathName = location.pathname;
   const pathSplit = pathName.split('/');
   const profileId = pathSplit[2];
+  const [showLogin, setShowLogin] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   const [imageLoader, showImageLoader] = useState(false);
   const [editAbout, setEditAbout] = useState(false);
   const [userProfile, setUserProfile] = useState({ });
@@ -51,26 +56,38 @@ const Profile = () => {
 
   const fetchUserProfile = () => {
     const data = { profileId };
-    if (currentUser) {
-      currentUser.getIdToken().then((token) => {
-        dispatch(fetchSelfProfile(token));
-      }).catch((error) => {
+    fetchProfile(data)
+      .then((res) => {
+        if (res.userBio) {
+          setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
+        }
+
+        setUserProfile(res);
+      })
+      .catch((error) => {
         console.error(error);
       });
-    } else {
-      fetchProfile(data)
-        .then((res) => {
-          setUserProfile(res);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
   };
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
+
+  const saveProfileDp = (dp) => {
+    const data = userProfile;
+    data.userDp = dp;
+    currentUser.getIdToken().then((token) => {
+      updateProfile(token, data)
+        .then((res) => {
+          setUserProfile(data);
+          showImageLoader(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          showImageLoader(false);
+        });
+    });
+  };
 
   const uploadDp = (mediaFile) => {
     showImageLoader(true);
@@ -106,25 +123,41 @@ const Profile = () => {
     }
   };
 
-  const saveProfileDp = (dp) => {
-    const data = userProfile;
-    data.userDp = dp;
-    currentUser.getIdToken().then((token) => {
-      updateProfile(token, data)
-        .then((res) => {
-          setUserProfile(data);
-          showImageLoader(false);
+  const sendVideoCallRequest = () => {
+    setShowLoader(true);
+    const cTime = moment().utc().format('YYYY-MM-DD HH:mm:ss');
+    const data = {
+      inviteeId: userProfile.userId,
+      callTime: cTime,
+      status: 0, // 0 means request
+    };
+    if (currentUser) {
+      currentUser
+        .getIdToken()
+        .then((token) => {
+          postVideoCallRequest(token, data)
+            .then((res) => {
+              setShowLoader(false);
+              notify('Sent the request successfully', 'success');
+              console.log(`video call req ${res}`);
+            })
+            .catch((error) => {
+              setShowLoader(false);
+              notify('Oops! something went wrong. Try again', 'danger');
+              console.log(error);
+            });
         })
         .catch((error) => {
-          console.error(error);
-          showImageLoader(false);
+          console.log(error);
         });
-    });
+    } else {
+      setShowLoader(false);
+      setShowLogin(true);
+    }
   };
 
   return (
     <div>
-
       <Col className="mx-auto" md={5}>
         <Card>
           <CardBody>
@@ -142,6 +175,7 @@ const Profile = () => {
                 )}
               </div>
 
+              {userProfile.selfProfile && (
               <div style={{ left: '55%', bottom: '25%', position: 'absolute' }}>
                 <Dropzone
                   accept="image/*"
@@ -164,10 +198,11 @@ const Profile = () => {
 
                 </Dropzone>
               </div>
+              )}
             </div>
             <div>
               <p>{userProfile.userName}</p>
-              {!userProfile.selfProfile && (<Button>Request Call</Button>)}
+              {!userProfile.selfProfile && (<Button onClick={sendVideoCallRequest}>Request Call</Button>)}
             </div>
 
           </CardBody>
@@ -213,10 +248,13 @@ const Profile = () => {
                   )}
                 </div>
               </Col>
-              <Edit onClick={() => setEditAbout(true)} />
+              {userProfile.selfProfile && <Edit onClick={() => setEditAbout(true)} />}
             </Row>
           </CardBody>
         </Card>
+        {showLoader && <Spinner style={{ position: 'absolute' }} />}
+        {showLogin && <Login closeLogin={() => setShowLogin(false)} />}
+
       </Col>
     </div>
   );

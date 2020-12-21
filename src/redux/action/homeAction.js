@@ -2,7 +2,6 @@ import axios from 'axios';
 import firebase from '../../firebase/Firebase';
 
 export const fetchFamousPosts = (lastItemId, token) => (dispatch) => {
-  console.log("tken "+token);
   dispatch({ type: 'LOAD_NEW_POSTS_PENDING' });
   if (token) axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   const requestData = {
