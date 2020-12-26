@@ -306,7 +306,7 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar className="bg-dark navbar-dark sticky-top" expand="md">
+      {/* <Navbar className="bg-dark navbar-dark sticky-top" expand="md">
         <NavbarToggler onClick={toggleNav} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
@@ -331,7 +331,7 @@ const Home = () => {
             </NavItem>
           </Nav>
         </Collapse>
-      </Navbar>
+      </Navbar> */}
       <Row style={{ marginTop: '48px' }}>
         <Col md={4} sm={6} className="mx-auto mt-2">
           <Card>

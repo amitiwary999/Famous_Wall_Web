@@ -70,7 +70,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    fetchUserProfile();
+    if (profileId) fetchUserProfile();
   }, []);
 
   const saveProfileDp = (dp) => {

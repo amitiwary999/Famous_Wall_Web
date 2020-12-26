@@ -11,6 +11,7 @@ import axios from 'axios';
 import ReactNotification from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import { AuthProvider } from './firebase/Auth';
+import NavbarLayout from './layout/navbar';
 
 const Home = lazy(() => import('./view/home/home'));
 const Login = lazy(() => import('./view/login/Login'));
@@ -41,6 +42,11 @@ function App() {
       view: profile,
       displayName: 'Profile',
     },
+    {
+      pageLink: '/profile',
+      view: profile,
+      displayName: 'Profile',
+    },
   ];
   return (
     <AuthProvider>
@@ -51,6 +57,7 @@ function App() {
             <Route
               render={({ location }) => (
                 <>
+                  <NavbarLayout />
                   <Switch location={location}>
                     {pages.map((page, index) => (
                       <Route
