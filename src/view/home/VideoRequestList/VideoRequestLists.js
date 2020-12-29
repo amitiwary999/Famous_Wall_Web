@@ -23,7 +23,7 @@ const VideoRequestLists = (props) => {
     const profileImg = item.userDp;
     const name = item.userName;
     return (
-      <Card key={index}>
+      <Card className="m-1" key={index}>
         <CardBody className="p-0" style={{ marginTop: '5px', marginBottom: '5px' }}>
           <div className="col" key={index}>
             <Delete className="float-right mr-1" style={{ cursor: 'pointer' }} onClick={() => updateRequest(item, index)} />

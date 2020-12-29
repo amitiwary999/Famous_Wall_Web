@@ -54,6 +54,20 @@ const Profile = () => {
     setUserProfile(selfProfile);
   }, [selfProfile]);
 
+  const fetchOwnProfile = () => {
+    currentUser.getIdToken().then((token) => {
+      fetchSelfProfile(token).then((profile) => {
+        if (profile.userBio) {
+          setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
+        }
+
+        setUserProfile(profile);
+      }).catch((error) => {
+        console.error(error);
+      });
+    });
+  };
+
   const fetchUserProfile = () => {
     const data = { profileId };
     fetchProfile(data)
@@ -70,7 +84,11 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (profileId) fetchUserProfile();
+    if (profileId) {
+      fetchUserProfile();
+    } else {
+      fetchOwnProfile();
+    }
   }, []);
 
   const saveProfileDp = (dp) => {

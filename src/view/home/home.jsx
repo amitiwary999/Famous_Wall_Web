@@ -33,20 +33,18 @@ import SetVideoCallTime from './SetVideoCallTime';
 import VideoRequestLists from './VideoRequestList/VideoRequestLists';
 import firebase from '../../firebase/Firebase';
 import './home.scss';
-import { fetchSelfProfile } from '../../redux/action/ProfileAction';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
   const history = useHistory();
 
   const {
-    famousPosts, lastItemId, hasMoreItems, loadItemStatus, selfProfile,
+    famousPosts, lastItemId, hasMoreItems, loadItemStatus,
   } = useSelector((state) => ({
     famousPosts: state.home.famousPosts,
     lastItemId: state.home.lastItemId,
     hasMoreItems: state.home.hasMoreItems,
     loadItemStatus: state.home.loadItemStatus,
-    selfProfile: state.selfProfile.selfProfile,
   }));
   const [selectedMediaType, setSelectedMediaType] = useState('');
   const [selectedMediaFile, setSelectedMediaFile] = useState('');
@@ -60,9 +58,7 @@ const Home = () => {
   const [videoRequestIndex, setVideoRequestIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('1');
   const [active, setActive] = useState('1');
-  const [isOpen, setIsOpen] = useState(false);
 
-  const toggleNav = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
   const getVideoRequest = (token) => {
@@ -94,7 +90,6 @@ const Home = () => {
   useEffect(() => {
     if (currentUser) {
       currentUser.getIdToken().then((token) => {
-        dispatch(fetchSelfProfile(token));
         dispatch(fetchFamousPosts(lastItemId, token));
         getVideoRequest(token);
         getVideoInvite(token);
@@ -284,24 +279,6 @@ const Home = () => {
 
   const hideLogin = () => {
     setShowLogin(false);
-  };
-
-  const logout = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        console.log('logout successfully');
-      })
-      .catch((error) => {
-        console.error(`logout failed ${error}`);
-      });
-  };
-
-  const openSelfProfile = () => {
-    if (selfProfile && selfProfile.profileId) {
-      history.replace(`/profile/${selfProfile.profileId}`);
-    }
   };
 
   return (

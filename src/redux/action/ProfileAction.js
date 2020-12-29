@@ -16,21 +16,21 @@ export const fetchProfile = (data) => new Promise((resolve, reject) => {
     });
 });
 
-export const fetchSelfProfile = (token) => (dispatch) => {
+export const fetchSelfProfile = (token) => new Promise((resolve, reject) =>{
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   axios.get('profile')
     .then((res) => {
       if (res && res.data) {
-        dispatch({ type: 'FETCH_SELF_PROFILE_SUCCESS', payload: res.data });
+        resolve(res.data);
       } else {
-        dispatch({ type: 'FETCH_SELF_PROFILE_FAILED' });
+        reject(Error('no user data'));
       }
     })
     .catch((error) => {
       console.error(error);
-      dispatch({ type: 'FETCH_SELF_PROFILE_FAILED' });
+      reject(error);
     });
-};
+});
 
 export const addUserProfile = (token, data) => new Promise((resolve, reject) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
