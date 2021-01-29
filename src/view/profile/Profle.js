@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-filename-extension */
@@ -58,12 +59,14 @@ const Profile = () => {
     currentUser.getIdToken().then((token) => {
       fetchSelfProfile(token).then((profile) => {
         if (profile.userBio) {
-          setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
+          setValue('userBio', RichTextEditor.createValueFromString(profile.userBio, 'html'));
         }
 
         setUserProfile(profile);
+        setShowLoader(false);
       }).catch((error) => {
         console.error(error);
+        setShowLoader(false);
       });
     });
   };
@@ -73,17 +76,20 @@ const Profile = () => {
     fetchProfile(data)
       .then((res) => {
         if (res.userBio) {
-          setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
+          setValue('userBio', RichTextEditor.createValueFromString(res.userBio, 'html'));
         }
 
         setUserProfile(res);
+        setShowLoader(false);
       })
       .catch((error) => {
         console.error(error);
+        setShowLoader(false);
       });
   };
 
   useEffect(() => {
+    setShowLoader(true);
     if (profileId) {
       fetchUserProfile();
     } else {
@@ -121,7 +127,13 @@ const Profile = () => {
   };
 
   const onAboutChange = (value) => {
-    setValue('userBio', RichTextEditor.createValueFromString(value, 'html'));
+    console.log(value.toString('html'));
+    try {
+      setValue('userBio', RichTextEditor.createValueFromString(value, 'html'));
+    } catch (error) {
+      console.error(error);
+      setValue('userBio', value);
+    }
   };
 
   const saveAbout = () => {
@@ -220,7 +232,7 @@ const Profile = () => {
             </div>
             <div>
               <p>{userProfile.userName}</p>
-              {!userProfile.selfProfile && (<Button onClick={sendVideoCallRequest}>Request Call</Button>)}
+              {!showLoader && !userProfile.selfProfile && (<Button onClick={sendVideoCallRequest}>Request Call</Button>)}
             </div>
 
           </CardBody>
@@ -254,7 +266,7 @@ const Profile = () => {
                         </button>
                         <button
                           onClick={() => {
-                            setValue('userBio', RichTextEditor.createValueFromString(selfProfile.userBio, 'html'));
+                            setValue('userBio', RichTextEditor.createValueFromString(userProfile.userBio, 'html'));
                             setEditAbout(false);
                           }}
                           className="btn btn-danger btn-sm mb-2 mt-1"
